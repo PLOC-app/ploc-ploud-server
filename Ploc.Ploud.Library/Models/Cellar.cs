@@ -46,7 +46,7 @@ namespace Ploc.Ploud.Library
 
         public String DatabasePath { get; private set; }
 
-        public T CreateObject<T>() where T : class, IPloudObject
+        public T CreateObject<T>() where T : IPloudObject
         {
             T obj = Activator.CreateInstance<T>();
             obj.Cellar = this;
@@ -66,6 +66,7 @@ namespace Ploc.Ploud.Library
                 ploudSecret.Version = Config.Version;
                 ploudSecret.Save();
                 this.CryptoProvider = aesCryptoProvider;
+                this.Repository.Execute(CellarOperation.Encrypt);
             }
             else
             {

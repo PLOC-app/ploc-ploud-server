@@ -25,5 +25,7 @@ namespace Ploc.Ploud.Library
         IList<T> GetAll<T>(IQuery query) where T : IPloudObject;
 
         IList<T> GetAll<T>() where T : IPloudObject;
+
+        bool Execute(CellarOperation cellarOperation);
     }
 }

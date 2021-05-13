@@ -49,7 +49,6 @@ namespace Ploc.Ploud.UnitTests
             IList<BottleFormat> bottleFormats = cellar.GetAll<BottleFormat>();
             BottleFormat bottleFormat = bottleFormats[0];
             bottleFormat.Delete();
-
             IList<BottleFormat> bottleFormats2 = cellar.GetAll<BottleFormat>();
             Assert.IsTrue((bottleFormats.Count - 1) == bottleFormats2.Count);
         }

@@ -11,6 +11,6 @@ namespace Ploc.Ploud.Library
 
         String DatabasePath { get; }
 
-        T CreateObject<T>() where T : class, IPloudObject;
+        T CreateObject<T>() where T : IPloudObject;
     }
 }

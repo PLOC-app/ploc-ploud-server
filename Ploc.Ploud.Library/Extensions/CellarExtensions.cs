@@ -44,5 +44,10 @@ namespace Ploc.Ploud.Library
         {
             return cellar.Repository.GetAll<T>();
         }
+
+        public static bool Execute(this ICellar cellar, CellarOperation cellarOperation)
+        {
+            return cellar.Execute(cellarOperation);
+        }
     }
 }

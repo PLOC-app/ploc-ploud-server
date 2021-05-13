@@ -103,6 +103,51 @@ namespace Ploc.Ploud.Library
             command.CommandText = String.Concat(columnsBuilder, valuesBuilder);
         }
 
+        public static void Encrypt<T>(this SQLiteCommand command) where T : IPloudObject
+        {
+            command.Parameters.Clear();
+            String tableName = typeof(T).GetTableName();
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.AppendFormat("UPDATE \"{0}\" SET ", tableName);
+             PropertyInfo[] properties = typeof(T).GetProperties();
+            foreach (PropertyInfo propertyInfo in properties)
+            {
+                DataStoreAttribute dataStoreAttribute = propertyInfo.GetAttribute<DataStoreAttribute>();
+                if ((dataStoreAttribute == null)
+                    || (!dataStoreAttribute.IsEncrypted))
+                {
+                    continue;
+                }
+                queryBuilder.AppendFormat("{0} = ploudEncrypt({1}.{0}),", dataStoreAttribute.Name, tableName);
+            }
+            queryBuilder.Remove(queryBuilder.Length - 1, 1);
+            command.CommandText = queryBuilder.ToString();
+            Console.WriteLine(command.CommandText);
+            command.ExecuteNonQueryWithRetry();
+        }
+
+        public static void Decrypt<T>(this SQLiteCommand command) where T : IPloudObject
+        {
+            command.Parameters.Clear();
+            String tableName = typeof(T).GetTableName();
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.AppendFormat("UPDATE \"{0}\" SET ", tableName);
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            foreach (PropertyInfo propertyInfo in properties)
+            {
+                DataStoreAttribute dataStoreAttribute = propertyInfo.GetAttribute<DataStoreAttribute>();
+                if ((dataStoreAttribute == null)
+                    || (!dataStoreAttribute.IsEncrypted))
+                {
+                    continue;
+                }
+                queryBuilder.AppendFormat("\"{0}\" = ploudDecrypt({0}),", dataStoreAttribute.Name);
+            }
+            queryBuilder.Remove(queryBuilder.Length - 1, 1);
+            command.CommandText = queryBuilder.ToString();
+            command.ExecuteNonQueryWithRetry();
+        }
+
         public static void AsUpdate(this SQLiteCommand command, IPloudObject ploudObject)
         {
             command.Parameters.Clear();
