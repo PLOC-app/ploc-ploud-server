@@ -17,25 +17,23 @@ namespace Ploc.Ploud.Library
             PropertyInfo[] properties = typeOfT.GetProperties(); // TODO à mettre en cache
             foreach (PropertyInfo propertyInfo in properties)
             {
+                Console.WriteLine("{0}", propertyInfo.Name);
                 DataStoreAttribute dataStoreAttribute = propertyInfo.GetAttribute<DataStoreAttribute>();
                 if(dataStoreAttribute == null)
                 {
+                    Console.WriteLine("\tDataStoreAttribute == NULL");
                     continue;
                 }
-                if((propertyInfo.PropertyType.IsClass)
-                    | (!propertyInfo.CanWrite))
-                {
-                    continue;
-                }
-
                 int ordinal = dataReader.GetOrdinal(dataStoreAttribute.Name);
                 if(ordinal == -1)
                 {
+                    Console.WriteLine("\tOrdinal == -1");
                     continue;
                 }
                 Object rawValue = dataReader[ordinal];
                 if(rawValue == null)
                 {
+                    Console.WriteLine("\tRawValue == NULL");
                     continue;
                 }
                 if (propertyInfo.PropertyType.IsEnum)
@@ -97,7 +95,7 @@ namespace Ploc.Ploud.Library
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex);
+                    Logger.Error(new Exception(command.CommandText, ex));
                     Thread.Sleep(Config.Data.RetryDelay);
                     if (++retryCount > Config.Data.MaxRetries)
                     {

@@ -24,7 +24,7 @@ namespace Ploc.Ploud.Library
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex);
+                    Logger.Error(new Exception(command.CommandText, ex));
                     Thread.Sleep(Config.Data.RetryDelay);
                     if (++retryCount > Config.Data.MaxRetries)
                     {
@@ -48,7 +48,7 @@ namespace Ploc.Ploud.Library
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex);
+                    Logger.Error(new Exception(command.CommandText, ex));
                     Thread.Sleep(Config.Data.RetryDelay);
                     if (++retryCount > Config.Data.MaxRetries)
                     {
@@ -69,8 +69,8 @@ namespace Ploc.Ploud.Library
             StringBuilder valuesBuilder = new StringBuilder();
             columnsBuilder.AppendFormat("INSERT INTO \"{0}\" ", tableName);
 
-            columnsBuilder.Append("(");
-            valuesBuilder.Append("(");
+            columnsBuilder.Append(" (");
+            valuesBuilder.Append(" VALUES (");
 
             PropertyInfo[] properties = ploudObject.GetType().GetProperties();
             foreach (PropertyInfo propertyInfo in properties)
@@ -95,7 +95,7 @@ namespace Ploc.Ploud.Library
 
             // Remove last ,
             columnsBuilder.Remove(columnsBuilder.Length - 1, 1);
-            valuesBuilder.Remove(columnsBuilder.Length - 1, 1);
+            valuesBuilder.Remove(valuesBuilder.Length - 1, 1);
 
             columnsBuilder.Append(")");
             valuesBuilder.Append(")");
@@ -144,6 +144,45 @@ namespace Ploc.Ploud.Library
             // Remove last ,
             whereBuilder.Remove(whereBuilder.Length - 1, 1);
             command.CommandText = String.Concat(valuesBuilder, whereBuilder);
+        }
+
+        public static void AsCreate(this SQLiteCommand command, Type ploudObjectType)
+        {
+            String tableName = ploudObjectType.GetTableName();
+            StringBuilder sqlBuilder = new StringBuilder();
+            sqlBuilder.AppendFormat("CREATE TABLE IF NOT EXISTS \"{0}\" (", tableName);
+
+            PropertyInfo[] properties = ploudObjectType.GetProperties();
+            foreach (PropertyInfo propertyInfo in properties)
+            {
+                DataStoreAttribute dataStoreAttribute = propertyInfo.GetAttribute<DataStoreAttribute>();
+                if (dataStoreAttribute == null)
+                {
+                    continue;
+                }
+
+                sqlBuilder.AppendFormat("\"{0}\" ", dataStoreAttribute.Name);
+                if(propertyInfo.PropertyType == typeof(String))
+                {
+                    sqlBuilder.Append(" TEXT ");
+                }
+                else
+                {
+                    sqlBuilder.Append(" NUMERIC ");
+                }
+
+                if(dataStoreAttribute.IsPrimaryKey)
+                {
+                    sqlBuilder.Append(" PRIMARY KEY  NOT NULL ");
+                }
+
+                sqlBuilder.Append(",");
+            }
+
+            // Remove last ,
+            sqlBuilder.Remove(sqlBuilder.Length - 1, 1);
+            sqlBuilder.Append(")");
+            command.CommandText = sqlBuilder.ToString();
         }
 
         public static bool Exists(this SQLiteCommand command, IPloudObject ploudObject)

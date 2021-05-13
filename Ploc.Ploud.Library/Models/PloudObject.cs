@@ -14,7 +14,7 @@ namespace Ploc.Ploud.Library
         [DataStore("sid")]
         public String DeviceIdentifier { get; set; }
 
-        [DataStoreAttribute("name", true)]
+        [DataStore("name", true)]
         public String Name { get; set; }
 
         [DataStore("tc")]
@@ -26,7 +26,7 @@ namespace Ploc.Ploud.Library
         [DataStore("tp")]
         public long Timestamp { get; set; }
 
-        public ICellar Cellar { get; internal set; }
+        public ICellar Cellar { get; set; }
 
         public virtual bool Save()
         {

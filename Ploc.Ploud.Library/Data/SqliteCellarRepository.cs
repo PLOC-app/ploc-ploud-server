@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
-    public class SqliteRepository : ICellarRepository
+    public class SqliteCellarRepository : ICellarRepository
     {
         private const int CommandTimeout = 120;
 
-        public SqliteRepository(ICryptoProvider cryptoProvider, String sqlitePath)
+        public SqliteCellarRepository(ICellar cellar, String sqlitePath)
         {
-            if(cryptoProvider == null)
+            if(cellar == null)
             {
-                throw new ArgumentNullException("ICryptoProvider");
+                throw new ArgumentNullException("Cellar");
             }
             if (String.IsNullOrEmpty(sqlitePath))
             {
@@ -28,12 +28,12 @@ namespace Ploc.Ploud.Library
             {
                 throw new FileNotFoundException(sqlitePath);
             }
-            this.CryptoProvider = cryptoProvider;
+            this.Cellar = cellar;
             this.SqlitePath = sqlitePath;
             this.LockFile = new SqliteLockFile(String.Concat(sqlitePath, Config.SqliteLockFileExtension));
         }
 
-        public ICryptoProvider CryptoProvider { get; private set; }
+        public ICellar Cellar { get; private set; }
 
         public SqliteLockFile LockFile { get; private set; }
 
@@ -144,6 +144,24 @@ namespace Ploc.Ploud.Library
             return success;
         }
 
+        public bool CreateStorage<T>() where T : IPloudObject
+        {
+            SQLiteConnection sqliteConnection = GetWriteableConnection();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.AsCreate(typeof(T));
+                command.ExecuteNonQueryWithRetry();
+            }
+            this.CloseWriteableConnection(sqliteConnection);
+            return true;
+        }
+
         public bool Save<T>(T ploudObject) where T : IPloudObject
         {
             return this.Save(ploudObject.Yield());
@@ -210,7 +228,7 @@ namespace Ploc.Ploud.Library
                 if (reader.Read())
                 {
                     ploudObject = Activator.CreateInstance<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.CryptoProvider);
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
                 }
                 reader.Close();
             }
@@ -236,7 +254,7 @@ namespace Ploc.Ploud.Library
                 if (reader.Read())
                 {
                     ploudObject = Activator.CreateInstance<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.CryptoProvider);
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
                 }
                 reader.Close();
             }
@@ -244,7 +262,7 @@ namespace Ploc.Ploud.Library
             return ploudObject;
         }
 
-        public IEnumerable<T> GetAll<T>(IQuery query) where T : IPloudObject
+        public IList<T> GetAll<T>(IQuery query) where T : IPloudObject
         {
             IList<T> ploudObjects = new List<T>();
             SQLiteConnection sqliteConnection = GetReadableConnection();
@@ -262,7 +280,7 @@ namespace Ploc.Ploud.Library
                 while (reader.Read())
                 {
                     T ploudObject = Activator.CreateInstance<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.CryptoProvider);
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
                     ploudObjects.Add(ploudObject);
                 }
                 reader.Close();
@@ -271,7 +289,7 @@ namespace Ploc.Ploud.Library
             return ploudObjects;
         }
 
-        public IEnumerable<T> GetAll<T>() where T : IPloudObject
+        public IList<T> GetAll<T>() where T : IPloudObject
         {
             IList<T> ploudObjects = new List<T>();
             SQLiteConnection sqliteConnection = GetReadableConnection();
@@ -289,7 +307,7 @@ namespace Ploc.Ploud.Library
                 while (reader.Read())
                 {
                     T ploudObject = Activator.CreateInstance<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.CryptoProvider);
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
                     ploudObjects.Add(ploudObject);
                 }
                 reader.Close();

@@ -10,5 +10,7 @@ namespace Ploc.Ploud.Library
         ICellarRepository Repository { get; }
 
         String DatabasePath { get; }
+
+        T CreateObject<T>() where T : class, IPloudObject;
     }
 }

@@ -8,7 +8,7 @@ namespace Ploc.Ploud.Library
 {
     public interface IPloudObject
     {
-        ICellar Cellar { get; }
+        ICellar Cellar { get; set; }
 
         String Identifier { get; set; }
 

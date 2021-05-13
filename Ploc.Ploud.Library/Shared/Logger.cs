@@ -12,6 +12,7 @@ namespace Ploc.Ploud.Library
         public static void Error(Exception ex)
         {
             Trace.WriteLine(ex);
+            Console.WriteLine(ex);
         }
     }
 }

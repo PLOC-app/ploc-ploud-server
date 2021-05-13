@@ -8,6 +8,8 @@ namespace Ploc.Ploud.Library
 {
     public interface ICellarRepository
     {
+        bool CreateStorage<T>() where T : IPloudObject;
+
         bool Delete<T>(T ploudObject) where T : IPloudObject;
 
         bool Delete<T>(IEnumerable<T> ploudObjects) where T : IPloudObject;
@@ -20,8 +22,8 @@ namespace Ploc.Ploud.Library
 
         T Get<T>(IQuery query) where T : IPloudObject;
 
-        IEnumerable<T> GetAll<T>(IQuery query) where T : IPloudObject;
+        IList<T> GetAll<T>(IQuery query) where T : IPloudObject;
 
-        IEnumerable<T> GetAll<T>() where T : IPloudObject;
+        IList<T> GetAll<T>() where T : IPloudObject;
     }
 }

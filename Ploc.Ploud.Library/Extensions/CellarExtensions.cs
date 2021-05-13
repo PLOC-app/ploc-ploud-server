@@ -35,12 +35,12 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.Get<T>(query);
         }
 
-        public static IEnumerable<T> GetAll<T>(this ICellar cellar, IQuery query) where T : IPloudObject
+        public static IList<T> GetAll<T>(this ICellar cellar, IQuery query) where T : IPloudObject
         {
             return cellar.Repository.GetAll<T>(query);
         }
 
-        public static IEnumerable<T> GetAll<T>(this ICellar cellar) where T : IPloudObject
+        public static IList<T> GetAll<T>(this ICellar cellar) where T : IPloudObject
         {
             return cellar.Repository.GetAll<T>();
         }

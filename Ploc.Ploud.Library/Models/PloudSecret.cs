@@ -2,19 +2,27 @@
 
 namespace Ploc.Ploud.Library
 {
-    public sealed class PloudOperation : IPloudObject
+    [DataStore("mbw")]
+    public sealed class PloudSecret : IPloudObject
     {
+        public const String GlobalIdentifier = "__global__";
+
+        public PloudSecret()
+        {
+            this.Identifier = GlobalIdentifier;
+        }
+
         [DataStore("id", false, true)]
         public String Identifier { get; set; }
 
-        [DataStore("sid")]
-        public String DeviceIdentifier { get; set; }
+        [DataStore("cwc", false)]
+        public String Key { get; set; }
 
-        [DataStore("tp")]
-        public long Timestamp { get; set; }
+        [DataStore("kzf", false)]
+        public String Iv { get; set; }
 
-        [DataStore("type", false, true)]
-        public int Type { get; set; }
+        [DataStore("version", false)]
+        public String Version { get; set; }
 
         public ICellar Cellar { get; set; }
 
@@ -25,7 +33,7 @@ namespace Ploc.Ploud.Library
 
         public bool Delete()
         {
-            return this.Cellar.Delete(this);
+            throw new InvalidOperationException();
         }
 
         public String Name
@@ -53,6 +61,30 @@ namespace Ploc.Ploud.Library
         }
 
         public DateTime TimeLastModified
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public string DeviceIdentifier
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public long Timestamp
         {
             get
             {

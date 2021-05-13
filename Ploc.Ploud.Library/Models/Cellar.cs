@@ -6,12 +6,8 @@ namespace Ploc.Ploud.Library
 {
     public sealed class Cellar : ICellar
     {
-        public Cellar(ICellarRepository repository, ICryptoProvider cryptoProvider, String databasePath)
+        public Cellar(ICellarRepository repository, String databasePath)
         {
-            if (cryptoProvider == null)
-            {
-                throw new ArgumentNullException("ICryptoProvider");
-            }
             if (repository == null)
             {
                 throw new ArgumentNullException("Repository");
@@ -24,15 +20,24 @@ namespace Ploc.Ploud.Library
             {
                 throw new FileNotFoundException(databasePath);
             }
-            this.CryptoProvider = cryptoProvider;
             this.Repository = repository;
             this.DatabasePath = databasePath;
+            this.InitializeCryptoProvider();
         }
 
-        public Cellar(ICryptoProvider cryptoProvider, String databasePath)
-            : this(new SqliteRepository(cryptoProvider, databasePath), cryptoProvider, databasePath)
+        public Cellar(String databasePath)
         {
-
+            if (String.IsNullOrEmpty(databasePath))
+            {
+                throw new ArgumentNullException("DatabasePath");
+            }
+            if (!File.Exists(databasePath))
+            {
+                throw new FileNotFoundException(databasePath);
+            }
+            this.Repository = new SqliteCellarRepository(this, databasePath);
+            this.DatabasePath = databasePath;
+            this.InitializeCryptoProvider();
         }
 
         public ICryptoProvider CryptoProvider { get; private set; }
@@ -40,5 +45,32 @@ namespace Ploc.Ploud.Library
         public ICellarRepository Repository { get; private set; }
 
         public String DatabasePath { get; private set; }
+
+        public T CreateObject<T>() where T : class, IPloudObject
+        {
+            T obj = Activator.CreateInstance<T>();
+            obj.Cellar = this;
+            return obj;
+        }
+
+        private void InitializeCryptoProvider()
+        {
+            this.Repository.CreateStorage<PloudSecret>();
+            PloudSecret ploudSecret = this.Repository.Get<PloudSecret>(PloudSecret.GlobalIdentifier);
+            if(ploudSecret == null)
+            {
+                AesCryptoProvider aesCryptoProvider = new AesCryptoProvider();
+                ploudSecret = this.CreateObject<PloudSecret>(); 
+                ploudSecret.Key = aesCryptoProvider.EncryptedKey;
+                ploudSecret.Iv = aesCryptoProvider.EncryptedIv;
+                ploudSecret.Version = Config.Version;
+                ploudSecret.Save();
+                this.CryptoProvider = aesCryptoProvider;
+            }
+            else
+            {
+                this.CryptoProvider = new AesCryptoProvider(ploudSecret.Key, ploudSecret.Iv);
+            }
+        }
     }
 }
