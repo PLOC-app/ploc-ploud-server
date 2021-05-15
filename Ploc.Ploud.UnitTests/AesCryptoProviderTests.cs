@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ploc.Ploud.Library;
 using System;
+using System.Text.Json;
 
 namespace Ploc.Ploud.UnitTests
 {
@@ -10,7 +11,21 @@ namespace Ploc.Ploud.UnitTests
         [TestMethod]
         public void TestEncryptDescryptAreEqualUsingSameInstance()
         {
+            
             ICryptoProvider aesCryptoProvider = new AesCryptoProvider();
+
+            Rack rack = new Rack();
+            rack.Name = "hello";
+            rack.Legend = RackLegendType.LetterOnXNumericOnY;
+
+            JsonSerializerOptions serializerOptions = new JsonSerializerOptions()
+            {
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault
+            };
+            
+            String jsonContent = JsonSerializer.Serialize(rack, serializerOptions);
+            Console.WriteLine(jsonContent);
+
             string textToEncrypt = "hello WORLD";
             string encryptedText = aesCryptoProvider.Encrypt(textToEncrypt);
             Console.WriteLine(encryptedText);

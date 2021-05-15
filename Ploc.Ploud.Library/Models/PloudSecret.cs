@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Ploc.Ploud.Library
 {
@@ -24,6 +25,7 @@ namespace Ploc.Ploud.Library
         [DataStore("version", false)]
         public String Version { get; set; }
 
+        [JsonIgnore]
         public ICellar Cellar { get; set; }
 
         public bool Save()
@@ -36,6 +38,7 @@ namespace Ploc.Ploud.Library
             throw new InvalidOperationException();
         }
 
+        [JsonIgnore]
         public String Name
         {
             get
@@ -48,6 +51,7 @@ namespace Ploc.Ploud.Library
             }
         }
 
+        [JsonIgnore]
         public DateTime TimeCreated
         {
             get
@@ -60,6 +64,7 @@ namespace Ploc.Ploud.Library
             }
         }
 
+        [JsonIgnore]
         public DateTime TimeLastModified
         {
             get
@@ -72,6 +77,7 @@ namespace Ploc.Ploud.Library
             }
         }
 
+        [JsonIgnore]
         public string DeviceIdentifier
         {
             get
@@ -84,6 +90,7 @@ namespace Ploc.Ploud.Library
             }
         }
 
+        [JsonIgnore]
         public long Timestamp
         {
             get
