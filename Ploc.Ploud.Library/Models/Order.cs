@@ -55,7 +55,7 @@ namespace Ploc.Ploud.Library
         [DataStore("apppid")]
         public String WineNumber { get; set; }
 
-        [DataStore("appproducturl")]
+        [DataStore("producturl", true)]
         public String ProductUrl { get; set; }
     }
 }

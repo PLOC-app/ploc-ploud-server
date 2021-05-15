@@ -2,7 +2,8 @@
 
 namespace Ploc.Ploud.Library
 {
-    public sealed class PloudOperation : IPloudObject
+    [DataStore("ploud")]
+    public sealed class DeletedObject : IPloudObject
     {
         [DataStore("id", false, true)]
         public String Identifier { get; set; }
@@ -25,7 +26,7 @@ namespace Ploc.Ploud.Library
 
         public bool Delete()
         {
-            return this.Cellar.Delete(this);
+            throw new NotSupportedException();
         }
 
         public String Name

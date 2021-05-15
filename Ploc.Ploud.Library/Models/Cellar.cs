@@ -73,5 +73,37 @@ namespace Ploc.Ploud.Library
                 this.CryptoProvider = new AesCryptoProvider(ploudSecret.Key, ploudSecret.Iv);
             }
         }
+
+        public SyncObjects GetSyncObjects(SyncObjectsOptions options)
+        {
+            IQuery ploudObjectsQuery = new Query.Builder()
+                .AddFilter("tm",ExpressionType.GreaterThanOrEqual, options.Timestamp)
+                .AddFilter("sid", ExpressionType.NotEqual, options.CallerId)
+                .Build();
+
+            IQuery deletedObjectsQuery = new Query.Builder()
+                .AddFilter("tp", ExpressionType.GreaterThanOrEqual, options.Timestamp)
+                .AddFilter("sid", ExpressionType.NotEqual, options.CallerId)
+                .Build();
+
+            SyncObjects syncObjects = new SyncObjects();
+            syncObjects.Countries = this.Repository.GetAll<Country>(ploudObjectsQuery);
+            syncObjects.Regions = this.Repository.GetAll<Region>(ploudObjectsQuery);
+            syncObjects.Appellations = this.Repository.GetAll<Appellation>(ploudObjectsQuery);
+            syncObjects.Classifications = this.Repository.GetAll<Classification>(ploudObjectsQuery);
+            syncObjects.Colors = this.Repository.GetAll<Color>(ploudObjectsQuery);
+            syncObjects.Grapes = this.Repository.GetAll<Grapes>(ploudObjectsQuery);
+            syncObjects.Vendors = this.Repository.GetAll<Vendor>(ploudObjectsQuery);
+            syncObjects.Owners = this.Repository.GetAll<Owner>(ploudObjectsQuery);
+            syncObjects.GlobalParameters = this.Repository.GetAll<GlobalParameter>(ploudObjectsQuery);
+            syncObjects.Wines = this.Repository.GetAll<Wine>(ploudObjectsQuery);
+            syncObjects.TastingNotes = this.Repository.GetAll<TastingNotes>(ploudObjectsQuery);
+            syncObjects.Racks = this.Repository.GetAll<Rack>(ploudObjectsQuery);
+            syncObjects.RackItems = this.Repository.GetAll<RackItem>(ploudObjectsQuery);
+            syncObjects.Documents = this.Repository.GetAll<Document>(ploudObjectsQuery);
+            syncObjects.DeletedObjects = this.Repository.GetAll<DeletedObject>(deletedObjectsQuery);
+            syncObjects.RemoveEmptyCollection();
+            return syncObjects;
+        }
     }
 }

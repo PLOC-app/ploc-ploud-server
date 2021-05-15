@@ -262,9 +262,9 @@ namespace Ploc.Ploud.Library
             return ploudObject;
         }
 
-        public IList<T> GetAll<T>(IQuery query) where T : IPloudObject
+        public PloudObjectCollection<T> GetAll<T>(IQuery query) where T : IPloudObject
         {
-            IList<T> ploudObjects = new List<T>();
+            PloudObjectCollection<T> ploudObjects = new PloudObjectCollection<T>();
             SQLiteConnection sqliteConnection = GetReadableConnection();
             if (sqliteConnection == null)
             {
@@ -289,9 +289,9 @@ namespace Ploc.Ploud.Library
             return ploudObjects;
         }
 
-        public IList<T> GetAll<T>() where T : IPloudObject
+        public PloudObjectCollection<T> GetAll<T>() where T : IPloudObject
         {
-            IList<T> ploudObjects = new List<T>();
+            PloudObjectCollection<T> ploudObjects = new PloudObjectCollection<T>();
             SQLiteConnection sqliteConnection = GetReadableConnection();
             if (sqliteConnection == null)
             {

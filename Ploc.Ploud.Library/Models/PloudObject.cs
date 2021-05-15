@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
@@ -26,6 +29,7 @@ namespace Ploc.Ploud.Library
         [DataStore("tp")]
         public long Timestamp { get; set; }
 
+        [JsonIgnore]
         public ICellar Cellar { get; set; }
 
         public virtual bool Save()

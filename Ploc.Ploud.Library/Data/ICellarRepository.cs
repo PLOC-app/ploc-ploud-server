@@ -22,9 +22,9 @@ namespace Ploc.Ploud.Library
 
         T Get<T>(IQuery query) where T : IPloudObject;
 
-        IList<T> GetAll<T>(IQuery query) where T : IPloudObject;
+        PloudObjectCollection<T> GetAll<T>(IQuery query) where T : IPloudObject;
 
-        IList<T> GetAll<T>() where T : IPloudObject;
+        PloudObjectCollection<T> GetAll<T>() where T : IPloudObject;
 
         bool Execute(CellarOperation cellarOperation);
     }

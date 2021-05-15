@@ -42,15 +42,9 @@ namespace Ploc.Ploud.Library
         [DataStore("type")]
         public int Type { get; set; }
 
+        [DataStore("content")]
         public byte[] Data { get; set; }
 
-        public void LoadData()
-        {
-            if(this.Data != null)
-            {
-                return;
-            }
-            throw new NotImplementedException();
-        }
+        public String Url { get; set; }
     }
 }

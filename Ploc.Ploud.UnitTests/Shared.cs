@@ -1,55 +1,52 @@
 ﻿using Ploc.Ploud.Library;
 using System;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 
 namespace Ploc.Ploud.UnitTests
 {
     public static class Shared
     {
-        private static String databasePath;
-
-        static Shared()
+        private static ConcurrentDictionary<String, String> databases = new ConcurrentDictionary<string, string>();
+        
+        public static void CopyDatabase(String destFilePath)
         {
-            databasePath = Path.Combine(Path.GetTempPath(), "PLOUD.co");
-            Console.WriteLine("DatabasePath = {0}", databasePath);
-        }
-
-        public static void CopyDatabase()
-        {
-            if(File.Exists(DatabasePath))
+            if(File.Exists(destFilePath))
             {
                 return;
             }
             using (var resource = typeof(Shared).Assembly.GetManifestResourceStream("Ploc.Ploud.UnitTests.Resources.fr.ploc.co"))
             {
-                using (var file = new FileStream(DatabasePath, FileMode.Create, FileAccess.Write))
+                using (var file = new FileStream(destFilePath, FileMode.Create, FileAccess.Write))
                 {
                     resource.CopyTo(file);
                 }
             }
         }
 
-        public static void DeleteDatabase()
+        public static void DeleteDatabase(String key)
         {
-            if (!File.Exists(DatabasePath))
+            if (!File.Exists(DatabasePath(key)))
             {
                 return;
             }
-            File.Delete(DatabasePath);
+            File.Delete(DatabasePath(key));
         }
 
-        public static ICellar Cellar()
+        public static ICellar Cellar(String key)
         {
-            CopyDatabase();
-            return new Cellar(DatabasePath);
+            CopyDatabase(DatabasePath(key));
+            return new Cellar(DatabasePath(key));
         }
 
-        public static String DatabasePath 
+        static String DatabasePath (String key)
         { 
-            get
+            if(!databases.ContainsKey(key))
             {
-                return databasePath;
-            } 
+                databases.TryAdd(key, Path.Combine(Path.GetTempPath(), "PLOUD." + key + ".co"));
+            }
+            return databases[key];
         }
     }
 }

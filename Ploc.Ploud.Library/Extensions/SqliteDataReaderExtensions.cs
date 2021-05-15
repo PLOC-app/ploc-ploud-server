@@ -36,6 +36,7 @@ namespace Ploc.Ploud.Library
                     Console.WriteLine("\tRawValue == NULL");
                     continue;
                 }
+                Console.WriteLine("\t{0}", dataStoreAttribute.Name);
                 if (propertyInfo.PropertyType.IsEnum)
                 {
                     propertyInfo.SetValue(obj, Convert.ToInt32(rawValue));
@@ -50,19 +51,31 @@ namespace Ploc.Ploud.Library
                     int intValue = Convert.ToInt32(rawValue);
                     propertyInfo.SetValue(obj, intValue == 0 ? false : true);
                 }
-                else if ((propertyInfo.PropertyType == typeof(Int16))
-                    | (propertyInfo.PropertyType == typeof(Int32))
-                    | (propertyInfo.PropertyType == typeof(Int64)))
+                else if (propertyInfo.PropertyType == typeof(Int16))
+                {
+                    Int16 shortValue = Convert.ToInt16(rawValue);
+                    propertyInfo.SetValue(obj, shortValue);
+                }
+                else if (propertyInfo.PropertyType == typeof(Int32))
+                {
+                    Int32 intValue = Convert.ToInt16(rawValue);
+                    propertyInfo.SetValue(obj, intValue);
+                }
+                else if (propertyInfo.PropertyType == typeof(Int64))
                 {
                     Int64 longValue = Convert.ToInt64(rawValue);
                     propertyInfo.SetValue(obj, longValue);
                 }
-                else if ((propertyInfo.PropertyType == typeof(Single))
-                    | (propertyInfo.PropertyType == typeof(Double)))
+                else if (propertyInfo.PropertyType == typeof(Single))
+                {
+                    Single singleValue = Convert.ToSingle(rawValue);
+                    propertyInfo.SetValue(obj, singleValue);
+                }
+                else if (propertyInfo.PropertyType == typeof(Double))
                 {
                     double doubleValue = Convert.ToDouble(rawValue);
                     propertyInfo.SetValue(obj, doubleValue);
-                } 
+                }
                 else if (propertyInfo.PropertyType == typeof(String))
                 {
                     if(dataStoreAttribute.IsEncrypted)
@@ -73,7 +86,6 @@ namespace Ploc.Ploud.Library
                     {
                         propertyInfo.SetValue(obj, rawValue.ToString());
                     }
-                    
                 }
                 else
                 {

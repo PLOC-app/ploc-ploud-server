@@ -12,6 +12,8 @@ namespace Ploc.Ploud.Library
 
         public FilterType Type { get; set; }
 
+        public ExpressionType Expression { get; set; }
+
         public Object Value { get; set; }
     }
 }

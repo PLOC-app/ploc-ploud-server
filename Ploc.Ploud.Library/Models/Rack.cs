@@ -18,7 +18,7 @@ namespace Ploc.Ploud.Library
         [DataStore("rows")]
         public int Rows { get; set; }
 
-        [DataStore("colums")]
+        [DataStore("columns")]
         public int Columns { get; set; }
 
         [DataStore("sizemode")]
@@ -42,9 +42,9 @@ namespace Ploc.Ploud.Library
         }
 
         [DataStore("intervals")]
-        public String Intervals { get; }
-
-        public RackIntervalCollection GetIntervals()
+        public String Intervals { get; set; }
+        
+        public RackIntervalCollection GetRackIntervals()
         {
             throw new NotImplementedException();
         }

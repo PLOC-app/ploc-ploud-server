@@ -10,19 +10,19 @@ namespace Ploc.Ploud.UnitTests
         [TestInitialize]
         public void TestInitialize()
         {
-            Shared.CopyDatabase();
+            Shared.CopyDatabase(GetType().Name);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            // Shared.DeleteDatabase();
+            Shared.DeleteDatabase(GetType().Name);
         }
 
         [TestMethod]
         public void TestPloudSecretIsGenerated()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             Assert.IsNotNull(cellar, "Cellar");
             PloudSecret ploudSecret = cellar.Get<PloudSecret>(PloudSecret.GlobalIdentifier);
             Assert.IsNotNull(ploudSecret, "PloudSecret");

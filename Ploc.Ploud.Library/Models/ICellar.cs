@@ -12,5 +12,7 @@ namespace Ploc.Ploud.Library
         String DatabasePath { get; }
 
         T CreateObject<T>() where T : IPloudObject;
+
+        SyncObjects GetSyncObjects(SyncObjectsOptions options);
     }
 }

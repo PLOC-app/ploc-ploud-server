@@ -174,12 +174,11 @@ namespace Ploc.Ploud.Library
                 {
                     whereBuilder.Append(isWhereClauseSet ? " AND " : " WHERE ");
                     whereBuilder.AppendFormat("\"{0}\" = {1} ", dataStoreAttribute.Name, paramName);
-
                     isWhereClauseSet = true;
                 }
                 else
                 {
-                    whereBuilder.AppendFormat("\"{0}\" = {1},", dataStoreAttribute.Name, paramName);
+                    valuesBuilder.AppendFormat("\"{0}\" = {1},", dataStoreAttribute.Name, paramName);
                 }
 
                 Object rawValue = propertyInfo.GetValue(ploudObject);
@@ -187,8 +186,9 @@ namespace Ploc.Ploud.Library
             }
 
             // Remove last ,
-            whereBuilder.Remove(whereBuilder.Length - 1, 1);
+            valuesBuilder.Remove(valuesBuilder.Length - 1, 1);
             command.CommandText = String.Concat(valuesBuilder, whereBuilder);
+            Console.WriteLine(command.CommandText);
         }
 
         public static void AsCreate(this SQLiteCommand command, Type ploudObjectType)
@@ -279,6 +279,11 @@ namespace Ploc.Ploud.Library
             {
                 int enumValue = (int)value;
                 command.Parameters.AddWithValue(name, enumValue);
+            }
+            else if (type == typeof(byte[]))
+            {
+                byte[] data = (byte[])value;
+                command.Parameters.Add(name, System.Data.DbType.Binary).Value = data;
             }
             else
             {

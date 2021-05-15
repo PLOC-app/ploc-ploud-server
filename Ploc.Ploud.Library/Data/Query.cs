@@ -12,19 +12,10 @@ namespace Ploc.Ploud.Library
 
         public void AddFilter(String column, String value)
         {
-            if(this.filters == null)
-            {
-                this.filters = new List<Filter>();
-            }
-            this.filters.Add(new Filter()
-            {
-                Column = column,
-                Value = value,
-                Type = FilterType.String
-            });
+            this.AddFilter(column, ExpressionType.Equal, value);
         }
 
-        public void AddFilter(String column, long value)
+        public void AddFilter(String column, ExpressionType expression, String value)
         {
             if (this.filters == null)
             {
@@ -33,6 +24,27 @@ namespace Ploc.Ploud.Library
             this.filters.Add(new Filter()
             {
                 Column = column,
+                Expression = expression,
+                Value = value,
+                Type = FilterType.String
+            });
+        }
+
+        public void AddFilter(String column, long value)
+        {
+            this.AddFilter(column, ExpressionType.Equal, value);
+        }
+
+        public void AddFilter(String column, ExpressionType expression, long value)
+        {
+            if (this.filters == null)
+            {
+                this.filters = new List<Filter>();
+            }
+            this.filters.Add(new Filter()
+            {
+                Column = column,
+                Expression = expression,
                 Value = value,
                 Type = FilterType.Numeric
             });
@@ -40,32 +52,33 @@ namespace Ploc.Ploud.Library
 
         public override string ToString()
         {
-            if(this.filters == null)
+            if (this.filters == null)
             {
                 return String.Empty;
             }
             StringBuilder builder = new StringBuilder();
-            for(int i = 0; i < this.filters.Count; i++)
+            for (int i = 0; i < this.filters.Count; i++)
             {
                 Filter filter = this.filters[i];
+                ExpressionValueAttribute expressionValue = filter.Expression.GetAttribute<ExpressionValueAttribute>();
                 builder.Append(i == 0 ? " where " : " and ");
                 builder.Append(filter.Column);
-                if(filter.Value == null)
+                if (filter.Value == null)
                 {
-                    builder.Append(" IS NULL");
+                    builder.Append(" IS NULL ");
                     continue;
                 }
-                builder.Append(" = ");
-                if(filter.Type == FilterType.Numeric)
+                builder.Append(expressionValue.Value);
+                if (filter.Type == FilterType.Numeric)
                 {
                     builder.Append(filter.Value.ToString());
-                } 
+                }
                 else
                 {
                     builder.AppendFormat(" '{0}' ", filter.Value.ToString().Replace("'", "''"));
                 }
             }
-            return base.ToString();
+            return builder.ToString();
         }
 
         public class Builder
@@ -78,9 +91,21 @@ namespace Ploc.Ploud.Library
                 return this;
             }
 
+            public Builder AddFilter(String column, ExpressionType expression, String value)
+            {
+                this.query.AddFilter(column, expression, value);
+                return this;
+            }
+
             public Builder AddFilter(String column, long value)
             {
                 this.query.AddFilter(column, value);
+                return this;
+            }
+
+            public Builder AddFilter(String column, ExpressionType expression, long value)
+            {
+                this.query.AddFilter(column, expression, value);
                 return this;
             }
 

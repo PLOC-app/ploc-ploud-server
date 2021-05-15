@@ -158,10 +158,10 @@ namespace Ploc.Ploud.Library
         [DataStore("appsku")]
         public String Sku { get; set; }
 
-        [DataStore("appproducturl")]
+        [DataStore("producturl", true)]
         public String ProductUrl { get; set; }
 
-        [DataStore("notificaztion")]
+        [DataStore("notification")]
         public int RemoteNotification { get; set; }
 
         [DataStore("presheet")]

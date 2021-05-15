@@ -11,19 +11,19 @@ namespace Ploc.Ploud.UnitTests
         [TestInitialize]
         public void TestInitialize()
         {
-            Shared.CopyDatabase();
+            Shared.CopyDatabase(GetType().Name);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            Shared.DeleteDatabase();
+            Shared.DeleteDatabase(GetType().Name);
         }
 
         [TestMethod]
         public void GetAllAppellationsShoudReturnObjects()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<Appellation> items = cellar.GetAll<Appellation>();
             Assert.IsTrue(items.Count > 0);
         }
@@ -31,7 +31,7 @@ namespace Ploc.Ploud.UnitTests
         [TestMethod]
         public void AddAppellation()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<Appellation> items1 = cellar.GetAll<Appellation>();
             Appellation item = cellar.CreateObject<Appellation>();
             item.Identifier = "HELLO";
@@ -44,7 +44,7 @@ namespace Ploc.Ploud.UnitTests
         [TestMethod]
         public void DeleteAppellation()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<Appellation> items1 = cellar.GetAll<Appellation>();
             Appellation item = items1[0];
             item.Delete();

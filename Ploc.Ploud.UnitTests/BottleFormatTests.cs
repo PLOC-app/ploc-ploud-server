@@ -11,19 +11,19 @@ namespace Ploc.Ploud.UnitTests
         [TestInitialize]
         public void TestInitialize()
         {
-            Shared.CopyDatabase();
+            Shared.CopyDatabase(GetType().Name);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            Shared.DeleteDatabase();
+            Shared.DeleteDatabase(GetType().Name);
         }
 
         [TestMethod]
         public void GetAllBottlesFormatsShoudReturnObjects()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<BottleFormat> bottleFormats = cellar.GetAll<BottleFormat>();
             Assert.IsTrue(bottleFormats.Count > 0);
         }
@@ -31,7 +31,7 @@ namespace Ploc.Ploud.UnitTests
         [TestMethod]
         public void AddBottleFormat()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<BottleFormat> bottleFormats = cellar.GetAll<BottleFormat>();
             BottleFormat bottleFormat = cellar.CreateObject<BottleFormat>();
             bottleFormat.Identifier = "HELLO";
@@ -43,9 +43,22 @@ namespace Ploc.Ploud.UnitTests
         }
 
         [TestMethod]
+        public void SaveBottleFormat()
+        {
+            ICellar cellar = Shared.Cellar(GetType().Name);
+            BottleFormat bottleFormat = cellar.CreateObject<BottleFormat>();
+            bottleFormat.Identifier = "HELLO";
+            bottleFormat.Volume = 1.25;
+            bottleFormat.Name = "Hello World";
+            bottleFormat.Save();
+            Assert.IsNotNull(cellar.Get<BottleFormat>(bottleFormat.Identifier));
+            Assert.IsTrue("Hello World" == cellar.Get<BottleFormat>(bottleFormat.Identifier).Name);
+        }
+
+        [TestMethod]
         public void DeleteBottleFormat()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<BottleFormat> bottleFormats = cellar.GetAll<BottleFormat>();
             BottleFormat bottleFormat = bottleFormats[0];
             bottleFormat.Delete();

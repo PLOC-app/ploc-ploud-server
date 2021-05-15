@@ -11,19 +11,19 @@ namespace Ploc.Ploud.UnitTests
         [TestInitialize]
         public void TestInitialize()
         {
-            Shared.CopyDatabase();
+            Shared.CopyDatabase(GetType().Name);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            Shared.DeleteDatabase();
+            Shared.DeleteDatabase(GetType().Name);
         }
 
         [TestMethod]
         public void GetAllCountriesShoudReturnObjects()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<Country> items = cellar.GetAll<Country>();
             Assert.IsTrue(items.Count > 0);
         }
@@ -31,7 +31,7 @@ namespace Ploc.Ploud.UnitTests
         [TestMethod]
         public void AddCountry()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<Country> items1 = cellar.GetAll<Country>();
             Country item = cellar.CreateObject<Country>();
             item.Identifier = "HELLO";
@@ -44,7 +44,7 @@ namespace Ploc.Ploud.UnitTests
         [TestMethod]
         public void DeleteCountry()
         {
-            ICellar cellar = Shared.Cellar();
+            ICellar cellar = Shared.Cellar(GetType().Name);
             IList<Country> items1 = cellar.GetAll<Country>();
             Country item = items1[0];
             item.Delete();
