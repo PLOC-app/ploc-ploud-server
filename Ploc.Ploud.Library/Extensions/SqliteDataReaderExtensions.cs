@@ -144,7 +144,7 @@ namespace Ploc.Ploud.Library
                 catch (Exception ex)
                 {
                     Logger.Error(new Exception(command.CommandText, ex));
-                    Thread.Sleep(Config.Data.RetryDelay);
+                    await Task.Delay(Config.Data.RetryDelay);
                     if (++retryCount > Config.Data.MaxRetries)
                     {
                         break;

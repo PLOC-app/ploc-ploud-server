@@ -46,6 +46,7 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("dt")]
         [DataStore("date")]
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime When { get; set; }
 
         [JsonPropertyName("cy")]

@@ -25,10 +25,12 @@ namespace Ploc.Ploud.Library
 
         [DataStore("tc")]
         [JsonPropertyName("tc")]
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime TimeCreated { get; set; }
 
         [DataStore("tm")]
         [JsonPropertyName("tm")]
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime TimeLastModified { get; set; }
 
         [DataStore("tp")]

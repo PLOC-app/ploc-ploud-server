@@ -40,6 +40,7 @@ namespace Ploc.Ploud.Library
         public String LocalTemplateIdentifier { get; set; }
 
         [JsonPropertyName("dt")]
+        [JsonConverter(typeof(DateTimeConverter))]
         [DataStore("date")]
         public DateTime When { get; set; }
 
