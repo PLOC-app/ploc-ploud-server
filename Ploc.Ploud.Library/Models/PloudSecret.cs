@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
@@ -33,7 +34,17 @@ namespace Ploc.Ploud.Library
             return this.Cellar.Save(this);
         }
 
+        public Task<bool> SaveAsync()
+        {
+            return this.Cellar.SaveAsync(this);
+        }
+
         public bool Delete()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public Task<bool> DeleteAsync()
         {
             throw new InvalidOperationException();
         }

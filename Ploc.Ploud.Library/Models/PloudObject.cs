@@ -43,9 +43,19 @@ namespace Ploc.Ploud.Library
             return this.Cellar.Save(this);
         }
 
+        public virtual Task<bool> SaveAsync()
+        {
+            return this.Cellar.SaveAsync(this);
+        }
+
         public virtual bool Delete()
         {
             return this.Cellar.Delete(this);
+        }
+
+        public virtual Task<bool> DeleteAsync()
+        {
+            return this.Cellar.DeleteAsync(this);
         }
     }
 }

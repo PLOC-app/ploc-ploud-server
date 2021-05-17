@@ -11,9 +11,19 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.Delete(ploudObject);
         }
 
+        public static Task<bool> DeleteAsync<T>(this ICellar cellar, T ploudObject) where T : IPloudObject
+        {
+            return cellar.Repository.DeleteAsync(ploudObject);
+        }
+
         public static bool Delete<T>(this ICellar cellar, IEnumerable<T> ploudObjects) where T : IPloudObject
         {
             return cellar.Repository.Delete(ploudObjects);
+        }
+
+        public static Task<bool> DeleteAsync<T>(this ICellar cellar, IEnumerable<T> ploudObjects) where T : IPloudObject
+        {
+            return cellar.Repository.DeleteAsync(ploudObjects);
         }
 
         public static bool Save<T>(this ICellar cellar, T ploudObject) where T : IPloudObject
@@ -21,9 +31,19 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.Save(ploudObject);
         }
 
+        public static Task<bool> SaveAsync<T>(this ICellar cellar, T ploudObject) where T : IPloudObject
+        {
+            return cellar.Repository.SaveAsync(ploudObject);
+        }
+
         public static bool Save<T>(this ICellar cellar, IEnumerable<T> ploudObjects) where T : IPloudObject
         {
             return cellar.Repository.Save(ploudObjects);
+        }
+
+        public static Task<bool> SaveAsync<T>(this ICellar cellar, IEnumerable<T> ploudObjects) where T : IPloudObject
+        {
+            return cellar.Repository.SaveAsync(ploudObjects);
         }
 
         public static T Get<T>(this ICellar cellar, String identifier) where T : IPloudObject

@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ploc.Ploud.Library;
 using System;
+using System.Threading.Tasks;
 
 namespace Ploc.Ploud.UnitTests
 {
@@ -25,6 +26,19 @@ namespace Ploc.Ploud.UnitTests
             ICellar cellar = Shared.Cellar(GetType().Name);
             Assert.IsNotNull(cellar, "Cellar");
             PloudSecret ploudSecret = cellar.Get<PloudSecret>(PloudSecret.GlobalIdentifier);
+            Assert.IsNotNull(ploudSecret, "PloudSecret");
+            Assert.IsNotNull(ploudSecret.Key, "PloudSecret.Key");
+            Assert.IsNotNull(ploudSecret.Iv, "PloudSecret.Iv");
+            Console.WriteLine("PloudSecret.Key = {0}", ploudSecret.Key);
+            Console.WriteLine("PloudSecret.Iv = {0}", ploudSecret.Iv);
+        }
+
+        [TestMethod]
+        public async Task TestPloudSecretIsGeneratedAsync()
+        {
+            ICellar cellar = Shared.Cellar(GetType().Name);
+            Assert.IsNotNull(cellar, "Cellar");
+            PloudSecret ploudSecret = await cellar.GetAsync<PloudSecret>(PloudSecret.GlobalIdentifier);
             Assert.IsNotNull(ploudSecret, "PloudSecret");
             Assert.IsNotNull(ploudSecret.Key, "PloudSecret.Key");
             Assert.IsNotNull(ploudSecret.Iv, "PloudSecret.Iv");

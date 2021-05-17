@@ -24,6 +24,10 @@ namespace Ploc.Ploud.Library
 
         bool Save();
 
+        Task<bool> SaveAsync();
+
         bool Delete();
+
+        Task<bool> DeleteAsync();
     }
 }

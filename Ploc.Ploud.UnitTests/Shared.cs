@@ -9,7 +9,11 @@ namespace Ploc.Ploud.UnitTests
     public static class Shared
     {
         private static ConcurrentDictionary<String, String> databases = new ConcurrentDictionary<string, string>();
-        
+
+        public const String ObjectIdentifier = "hw";
+
+        public const String ObjectName = "Hello World";
+
         public static void CopyDatabase(String destFilePath)
         {
             if(File.Exists(destFilePath))
