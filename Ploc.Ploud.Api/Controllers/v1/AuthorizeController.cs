@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api.Controllers
 {
-    [Route("[controller]")]
+    [Route("v1/[controller]")]
     [ApiController]
-    public class StatusController : ControllerBase
+    public class AuthorizeController : ControllerBase
     {
-
+        
     }
 }

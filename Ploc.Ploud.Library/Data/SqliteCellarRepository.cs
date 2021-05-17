@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -74,12 +75,55 @@ namespace Ploc.Ploud.Library
             return sqliteConnection;
         }
 
+        private async Task<SQLiteConnection> GetReadableConnectionAsync()
+        {
+            String connectionString = GetConnectionString();
+            SQLiteConnection sqliteConnection = new SQLiteConnection(connectionString);
+            int retryCount = 0;
+            while (sqliteConnection.State != ConnectionState.Open)
+            {
+                try
+                {
+                    await sqliteConnection.OpenAsync();
+                    sqliteConnection.DefaultTimeout = CommandTimeout;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                    Thread.Sleep(Config.Data.RetryDelay);
+                    if (++retryCount > Config.Data.MaxRetries)
+                    {
+                        break;
+                    }
+                }
+            }
+            if (sqliteConnection.State != ConnectionState.Open)
+            {
+                await sqliteConnection.CloseAsync();
+                return null;
+            }
+            return sqliteConnection;
+        }
+
         private void CloseReadableConnection(SQLiteConnection sqliteConnection)
         {
             try
             {
                 sqliteConnection.Close();
                 sqliteConnection.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+        }
+
+        private async Task CloseReadableConnectionAsync(SQLiteConnection sqliteConnection)
+        {
+            try
+            {
+                await sqliteConnection.CloseAsync();
+                await sqliteConnection.DisposeAsync();
             }
             catch (Exception ex)
             {
@@ -98,15 +142,45 @@ namespace Ploc.Ploud.Library
             return sqliteConnection;
         }
 
+        private async Task<SQLiteConnection> GetWriteableConnectionAsync()
+        {
+            this.LockFile.Lock();
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                this.LockFile.Unlock();
+            }
+            return sqliteConnection;
+        }
+
         private void CloseWriteableConnection(SQLiteConnection sqliteConnection)
         {
             CloseReadableConnection(sqliteConnection);
             this.LockFile.Unlock();
         }
 
+        private async Task CloseWriteableConnectionAsync(SQLiteConnection sqliteConnection)
+        {
+            try
+            {
+                await sqliteConnection.CloseAsync();
+                await sqliteConnection.DisposeAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            this.LockFile.Unlock();
+        }
+
         public bool Delete<T>(T ploudObject) where T : IPloudObject
         {
             return this.Delete(ploudObject.Yield());
+        }
+
+        public Task<bool> DeleteAsync<T>(T ploudObject) where T : IPloudObject
+        {
+            return this.DeleteAsync(ploudObject.Yield());
         }
 
         public bool Delete<T>(IEnumerable<T> ploudObjects) where T : IPloudObject
@@ -144,6 +218,41 @@ namespace Ploc.Ploud.Library
             return success;
         }
 
+        public async Task<bool> DeleteAsync<T>(IEnumerable<T> ploudObjects) where T : IPloudObject
+        {
+            SQLiteConnection sqliteConnection = await GetWriteableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            SQLiteTransaction sqliteTransaction = sqliteConnection.BeginTransaction();
+            foreach (IPloudObject ploudObject in ploudObjects)
+            {
+                String tableName = ploudObject.GetType().GetTableName();
+                using (SQLiteCommand command = sqliteConnection.CreateCommand())
+                {
+                    command.Transaction = sqliteTransaction;
+                    command.CommandType = CommandType.Text;
+                    command.CommandTimeout = CommandTimeout;
+                    command.CommandText = String.Format("delete from \"{0}\" where id = @id", tableName);
+                    command.Parameters.AddWithValue("@id", ploudObject.Identifier);
+                    await command.ExecuteNonQueryWithRetryAsync();
+                }
+            }
+            bool success = false;
+            try
+            {
+                await sqliteTransaction.CommitAsync();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            await this.CloseWriteableConnectionAsync(sqliteConnection);
+            return success;
+        }
+
         public bool CreateStorage<T>() where T : IPloudObject
         {
             SQLiteConnection sqliteConnection = GetWriteableConnection();
@@ -165,6 +274,11 @@ namespace Ploc.Ploud.Library
         public bool Save<T>(T ploudObject) where T : IPloudObject
         {
             return this.Save(ploudObject.Yield());
+        }
+
+        public Task<bool> SaveAsync<T>(T ploudObject) where T : IPloudObject
+        {
+            return this.SaveAsync(ploudObject.Yield());
         }
 
         public bool Save<T>(IEnumerable<T> ploudObjects) where T : IPloudObject
@@ -209,6 +323,48 @@ namespace Ploc.Ploud.Library
             return success;
         }
 
+        public async Task<bool> SaveAsync<T>(IEnumerable<T> ploudObjects) where T : IPloudObject
+        {
+            SQLiteConnection sqliteConnection = await GetWriteableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            SQLiteTransaction sqliteTransaction = sqliteConnection.BeginTransaction();
+            foreach (IPloudObject ploudObject in ploudObjects)
+            {
+                String tableName = ploudObject.GetType().GetTableName();
+                using (SQLiteCommand command = sqliteConnection.CreateCommand())
+                {
+                    command.Transaction = sqliteTransaction;
+                    command.CommandType = CommandType.Text;
+                    command.CommandTimeout = CommandTimeout;
+                    bool objectExists = command.Exists(ploudObject);
+                    if (objectExists)
+                    {
+                        command.AsUpdate(ploudObject);
+                    }
+                    else
+                    {
+                        command.AsInsert(ploudObject);
+                    }
+                    await command.ExecuteNonQueryWithRetryAsync();
+                }
+            }
+            bool success = false;
+            try
+            {
+                await sqliteTransaction.CommitAsync();
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            await this.CloseWriteableConnectionAsync(sqliteConnection);
+            return success;
+        }
+
         public T Get<T>(String identifier) where T : IPloudObject
         {
             SQLiteConnection sqliteConnection = GetReadableConnection();
@@ -224,15 +380,42 @@ namespace Ploc.Ploud.Library
                 command.CommandTimeout = CommandTimeout;
                 command.CommandText = String.Format("select * from \"{0}\" where id = @id", tableName);
                 command.Parameters.AddWithValue("@id", identifier);
-                SQLiteDataReader reader = command.ExecuteReaderWithRetry();
+                DbDataReader reader = command.ExecuteReaderWithRetry();
                 if (reader.Read())
                 {
                     ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
                 }
                 reader.Close();
             }
             this.CloseReadableConnection(sqliteConnection);
+            return ploudObject;
+        }
+
+        public async Task<T> GetAsync<T>(String identifier) where T : IPloudObject
+        {
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            T ploudObject = default(T);
+            if (sqliteConnection == null)
+            {
+                return ploudObject;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                String tableName = typeof(T).GetTableName();
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = String.Format("select * from \"{0}\" where id = @id", tableName);
+                command.Parameters.AddWithValue("@id", identifier);
+                DbDataReader reader = await command.ExecuteReaderWithRetryAsync();
+                if (reader.Read())
+                {
+                    ploudObject = this.Cellar.CreateObject<T>();
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
+                }
+                reader.Close();
+            }
+            await this.CloseReadableConnectionAsync(sqliteConnection);
             return ploudObject;
         }
 
@@ -250,15 +433,41 @@ namespace Ploc.Ploud.Library
                 command.CommandType = CommandType.Text;
                 command.CommandTimeout = CommandTimeout;
                 command.CommandText = String.Format("select * from \"{0}\" {1}", tableName, (query == null ? "" : query.ToString()));
-                SQLiteDataReader reader = command.ExecuteReaderWithRetry();
+                DbDataReader reader = command.ExecuteReaderWithRetry();
                 if (reader.Read())
                 {
                     ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
                 }
                 reader.Close();
             }
             this.CloseReadableConnection(sqliteConnection);
+            return ploudObject;
+        }
+
+        public async Task<T> GetAsync<T>(IQuery query) where T : IPloudObject
+        {
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            T ploudObject = default(T);
+            if (sqliteConnection == null)
+            {
+                return ploudObject;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                String tableName = typeof(T).GetTableName();
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = String.Format("select * from \"{0}\" {1}", tableName, (query == null ? "" : query.ToString()));
+                DbDataReader reader = await command.ExecuteReaderWithRetryAsync();
+                if (reader.Read())
+                {
+                    ploudObject = this.Cellar.CreateObject<T>();
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
+                }
+                reader.Close();
+            }
+            await this.CloseReadableConnectionAsync(sqliteConnection);
             return ploudObject;
         }
 
@@ -276,7 +485,7 @@ namespace Ploc.Ploud.Library
                 command.CommandType = CommandType.Text;
                 command.CommandTimeout = CommandTimeout;
                 command.CommandText = String.Format("select * from \"{0}\" {1}", tableName, (query == null ? "" : query.ToString()));
-                SQLiteDataReader reader = command.ExecuteReaderWithRetry();
+                DbDataReader reader = command.ExecuteReaderWithRetry();
                 while (reader.Read())
                 {
                     T ploudObject = this.Cellar.CreateObject<T>();
@@ -286,6 +495,33 @@ namespace Ploc.Ploud.Library
                 reader.Close();
             }
             this.CloseReadableConnection(sqliteConnection);
+            return ploudObjects;
+        }
+
+        public async Task<PloudObjectCollection<T>> GetAllAsync<T>(IQuery query) where T : IPloudObject
+        {
+            PloudObjectCollection<T> ploudObjects = new PloudObjectCollection<T>();
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return ploudObjects;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                String tableName = typeof(T).GetTableName();
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = String.Format("select * from \"{0}\" {1}", tableName, (query == null ? "" : query.ToString()));
+                DbDataReader reader = await command.ExecuteReaderWithRetryAsync();
+                while (reader.Read())
+                {
+                    T ploudObject = this.Cellar.CreateObject<T>();
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    ploudObjects.Add(ploudObject);
+                }
+                reader.Close();
+            }
+            await this.CloseReadableConnectionAsync(sqliteConnection);
             return ploudObjects;
         }
 
@@ -303,7 +539,7 @@ namespace Ploc.Ploud.Library
                 command.CommandType = CommandType.Text;
                 command.CommandTimeout = CommandTimeout;
                 command.CommandText = String.Format("select * from \"{0}\"", tableName);
-                SQLiteDataReader reader = command.ExecuteReaderWithRetry();
+                DbDataReader reader = command.ExecuteReaderWithRetry();
                 while (reader.Read())
                 {
                     T ploudObject = this.Cellar.CreateObject<T>();
@@ -313,6 +549,33 @@ namespace Ploc.Ploud.Library
                 reader.Close();
             }
             this.CloseReadableConnection(sqliteConnection);
+            return ploudObjects;
+        }
+
+        public async Task<PloudObjectCollection<T>> GetAllAsync<T>() where T : IPloudObject
+        {
+            PloudObjectCollection<T> ploudObjects = new PloudObjectCollection<T>();
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return ploudObjects;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                String tableName = typeof(T).GetTableName();
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = String.Format("select * from \"{0}\"", tableName);
+                DbDataReader reader = await command.ExecuteReaderWithRetryAsync();
+                while (reader.Read())
+                {
+                    T ploudObject = this.Cellar.CreateObject<T>();
+                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    ploudObjects.Add(ploudObject);
+                }
+                reader.Close();
+            }
+            await this.CloseReadableConnectionAsync(sqliteConnection);
             return ploudObjects;
         }
 
@@ -330,6 +593,10 @@ namespace Ploc.Ploud.Library
             else if (cellarOperation == CellarOperation.Decrypt)
             {
                 status = this.Decrypt();
+            }
+            else if (cellarOperation == CellarOperation.Validate)
+            {
+                status = this.Validate();
             }
             else
             {
@@ -354,6 +621,25 @@ namespace Ploc.Ploud.Library
             }
             this.CloseWriteableConnection(sqliteConnection);
             return true;
+        }
+
+        private bool Validate()
+        {
+            SQLiteConnection sqliteConnection = GetReadableConnection();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            int count = 0;
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = "SELECT count(*) from sql_master where name in ('rackitem', 'wine', 'globalparameter');";
+                command.ExecuteNonQueryWithRetry();
+            }
+            this.CloseReadableConnection(sqliteConnection);
+            return count == 3;
         }
 
         private bool Encrypt()

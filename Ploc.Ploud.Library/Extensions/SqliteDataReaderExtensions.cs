@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
 using System.Reflection;
@@ -9,9 +10,14 @@ using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
-    public static class SqliteDataReaderExtensions
+    public static class DbDataReaderExtensions
     {
-        public static void MapDataToObject<T>(this SQLiteDataReader dataReader, T obj, ICryptoProvider cryptoProvider)
+        public static void MapDataToObject<T>(this DbDataReader dataReader, T obj, ICryptoProvider cryptoProvider)
+        {
+            MapDataToObject<T>(dataReader, obj, cryptoProvider, false);
+        }
+
+        public static void MapDataToObject<T>(this DbDataReader dataReader, T obj, ICryptoProvider cryptoProvider, bool loadBinaryData)
         {
             Type typeOfT = typeof(T);
             PropertyInfo[] properties = typeOfT.GetProperties(); // TODO à mettre en cache
@@ -31,7 +37,8 @@ namespace Ploc.Ploud.Library
                     continue;
                 }
                 Object rawValue = dataReader[ordinal];
-                if(rawValue == null)
+                if((rawValue == null)
+                    | (rawValue == DBNull.Value))
                 {
                     Console.WriteLine("\tRawValue == NULL");
                     continue;
@@ -87,22 +94,27 @@ namespace Ploc.Ploud.Library
                         propertyInfo.SetValue(obj, rawValue.ToString());
                     }
                 }
+                else if (propertyInfo.PropertyType == typeof(byte[]))
+                {
+                    propertyInfo.SetValue(obj, rawValue);
+                }
                 else
                 {
+                    Console.WriteLine("Not Implemented {0}", propertyInfo.PropertyType);
                     throw new NotImplementedException();
                 }
             }
         }
 
-        public static SQLiteDataReader ExecuteReaderWithRetry(this SQLiteCommand command)
+        public static DbDataReader ExecuteReaderWithRetry(this SQLiteCommand command)
         {
-            SQLiteDataReader sqliteDataReader = null;
+            DbDataReader dbDataReader = null;
             int retryCount = 0;
             while (true)
             {
                 try
                 {
-                    sqliteDataReader = command.ExecuteReader();
+                    dbDataReader = command.ExecuteReader();
                     break;
                 }
                 catch (Exception ex)
@@ -115,7 +127,31 @@ namespace Ploc.Ploud.Library
                     }
                 }
             }
-            return sqliteDataReader;
+            return dbDataReader;
+        }
+
+        public static async Task<DbDataReader> ExecuteReaderWithRetryAsync(this SQLiteCommand command)
+        {
+            DbDataReader dbDataReader = null;
+            int retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    dbDataReader = await command.ExecuteReaderAsync();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(new Exception(command.CommandText, ex));
+                    Thread.Sleep(Config.Data.RetryDelay);
+                    if (++retryCount > Config.Data.MaxRetries)
+                    {
+                        break;
+                    }
+                }
+            }
+            return dbDataReader;
         }
     }
 }

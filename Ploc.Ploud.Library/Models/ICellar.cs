@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
@@ -13,6 +14,10 @@ namespace Ploc.Ploud.Library
 
         T CreateObject<T>() where T : IPloudObject;
 
+        bool IsValid();
+
         SyncObjects GetSyncObjects(SyncObjectsOptions options);
+
+        Task<SyncObjects> GetSyncObjectsAsync(SyncObjectsOptions options);
     }
 }

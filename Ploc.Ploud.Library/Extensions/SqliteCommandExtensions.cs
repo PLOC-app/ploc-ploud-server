@@ -35,6 +35,30 @@ namespace Ploc.Ploud.Library
             return ret;
         }
 
+        public static async Task<Int32> ExecuteNonQueryWithRetryAsync(this SQLiteCommand command)
+        {
+            int ret = 0;
+            int retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    ret = await command.ExecuteNonQueryAsync();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(new Exception(command.CommandText, ex));
+                    Thread.Sleep(Config.Data.RetryDelay);
+                    if (++retryCount > Config.Data.MaxRetries)
+                    {
+                        break;
+                    }
+                }
+            }
+            return ret;
+        }
+
         public static Int64 ExecuteScalarWithRetry(this SQLiteCommand command)
         {
             Int64 ret = 0;

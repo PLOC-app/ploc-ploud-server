@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api
 {
@@ -16,5 +13,9 @@ namespace Ploc.Ploud.Api
         public String Directory { get; set; }
 
         public String VirtualDirectory { get; set; }
+
+        public String Url { get; set; }
+
+        public bool VerifySignature { get; set; }
     }
 }

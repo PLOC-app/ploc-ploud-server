@@ -12,6 +12,8 @@ namespace Ploc.Ploud.Library
 
         Encrypt,
 
-        Decrypt
+        Decrypt,
+
+        Validate
     }
 }

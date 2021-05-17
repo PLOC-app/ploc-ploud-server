@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
@@ -30,19 +31,39 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.Get<T>(identifier);
         }
 
+        public static Task<T> GetAsync<T>(this ICellar cellar, String identifier) where T : IPloudObject
+        {
+            return cellar.Repository.GetAsync<T>(identifier);
+        }
+
         public static T Get<T>(this ICellar cellar, IQuery query) where T : IPloudObject
         {
             return cellar.Repository.Get<T>(query);
         }
 
-        public static IList<T> GetAll<T>(this ICellar cellar, IQuery query) where T : IPloudObject
+        public static Task<T> GetAsync<T>(this ICellar cellar, IQuery query) where T : IPloudObject
+        {
+            return cellar.Repository.GetAsync<T>(query);
+        }
+
+        public static PloudObjectCollection<T> GetAll<T>(this ICellar cellar, IQuery query) where T : IPloudObject
         {
             return cellar.Repository.GetAll<T>(query);
         }
 
-        public static IList<T> GetAll<T>(this ICellar cellar) where T : IPloudObject
+        public static Task<PloudObjectCollection<T>> GetAllAsync<T>(this ICellar cellar, IQuery query) where T : IPloudObject
+        {
+            return cellar.Repository.GetAllAsync<T>(query);
+        }
+
+        public static PloudObjectCollection<T> GetAll<T>(this ICellar cellar) where T : IPloudObject
         {
             return cellar.Repository.GetAll<T>();
+        }
+
+        public static Task<PloudObjectCollection<T>> GetAllAsync<T>(this ICellar cellar) where T : IPloudObject
+        {
+            return cellar.Repository.GetAllAsync<T>();
         }
 
         public static bool Execute(this ICellar cellar, CellarOperation cellarOperation)

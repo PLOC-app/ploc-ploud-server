@@ -67,9 +67,11 @@ namespace Ploc.Ploud.UnitTests
             item.Data = GetLogo();
             item.Save();
 
-
+            Console.WriteLine("Document.Length = {0}", item.Data.Length);
             Document item2 = cellar.Get<Document>(item.Identifier);
-            // TODO assert
+            Assert.AreEqual(item.Data.Length, item2.Data.Length);
+
+            File.WriteAllBytes(@"c:\temp\ploc.png", item2.Data);
         }
 
         private byte[] GetLogo()

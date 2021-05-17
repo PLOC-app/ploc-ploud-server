@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
@@ -72,6 +73,47 @@ namespace Ploc.Ploud.Library
             {
                 this.CryptoProvider = new AesCryptoProvider(ploudSecret.Key, ploudSecret.Iv);
             }
+        }
+
+        public bool IsValid()
+        {
+            if(!File.Exists(this.DatabasePath))
+            {
+                return false;
+            }
+            return this.Repository.Execute(CellarOperation.Validate);
+        }
+
+        public async Task<SyncObjects> GetSyncObjectsAsync(SyncObjectsOptions options)
+        {
+            IQuery ploudObjectsQuery = new Query.Builder()
+                .AddFilter("tm", ExpressionType.GreaterThanOrEqual, options.Timestamp)
+                .AddFilter("sid", ExpressionType.NotEqual, options.CallerId)
+                .Build();
+
+            IQuery deletedObjectsQuery = new Query.Builder()
+                .AddFilter("tp", ExpressionType.GreaterThanOrEqual, options.Timestamp)
+                .AddFilter("sid", ExpressionType.NotEqual, options.CallerId)
+                .Build();
+
+            SyncObjects syncObjects = new SyncObjects();
+            syncObjects.Countries = await this.Repository.GetAllAsync<Country>(ploudObjectsQuery);
+            syncObjects.Regions = await this.Repository.GetAllAsync<Region>(ploudObjectsQuery);
+            syncObjects.Appellations = await this.Repository.GetAllAsync<Appellation>(ploudObjectsQuery);
+            syncObjects.Classifications = await this.Repository.GetAllAsync<Classification>(ploudObjectsQuery);
+            syncObjects.Colors = await this.Repository.GetAllAsync<Color>(ploudObjectsQuery);
+            syncObjects.Grapes = await this.Repository.GetAllAsync<Grapes>(ploudObjectsQuery);
+            syncObjects.Vendors = await this.Repository.GetAllAsync<Vendor>(ploudObjectsQuery);
+            syncObjects.Owners = await this.Repository.GetAllAsync<Owner>(ploudObjectsQuery);
+            syncObjects.GlobalParameters = await this.Repository.GetAllAsync<GlobalParameter>(ploudObjectsQuery);
+            syncObjects.Wines = await this.Repository.GetAllAsync<Wine>(ploudObjectsQuery);
+            syncObjects.TastingNotes = await this.Repository.GetAllAsync<TastingNotes>(ploudObjectsQuery);
+            syncObjects.Racks = await this.Repository.GetAllAsync<Rack>(ploudObjectsQuery);
+            syncObjects.RackItems = await this.Repository.GetAllAsync<RackItem>(ploudObjectsQuery);
+            syncObjects.Documents = await this.Repository.GetAllAsync<Document>(ploudObjectsQuery);
+            syncObjects.DeletedObjects = await this.Repository.GetAllAsync<DeletedObject>(deletedObjectsQuery);
+            syncObjects.RemoveEmptyCollection();
+            return syncObjects;
         }
 
         public SyncObjects GetSyncObjects(SyncObjectsOptions options)
