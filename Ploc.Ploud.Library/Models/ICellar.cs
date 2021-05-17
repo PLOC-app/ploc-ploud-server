@@ -14,6 +14,8 @@ namespace Ploc.Ploud.Library
 
         T CreateObject<T>() where T : IPloudObject;
 
+        IPloudObject CreateObject(Type ploudObjectType);
+
         bool IsValid();
 
         SyncObjects GetSyncObjects(SyncObjectsOptions options);

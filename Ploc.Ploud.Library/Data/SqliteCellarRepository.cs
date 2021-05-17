@@ -365,6 +365,33 @@ namespace Ploc.Ploud.Library
             return success;
         }
 
+        public IPloudObject Get(String identifier, Type ploudObjectType)
+        {
+            SQLiteConnection sqliteConnection = GetReadableConnection();
+            IPloudObject ploudObject = null;
+            if (sqliteConnection == null)
+            {
+                return ploudObject;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                String tableName = ploudObjectType.GetTableName();
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = String.Format("select * from \"{0}\" where id = @id", tableName);
+                command.Parameters.AddWithValue("@id", identifier);
+                DbDataReader reader = command.ExecuteReaderWithRetry();
+                if (reader.Read())
+                {
+                    ploudObject = this.Cellar.CreateObject(ploudObjectType);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider, true);
+                }
+                reader.Close();
+            }
+            this.CloseReadableConnection(sqliteConnection);
+            return ploudObject;
+        }
+
         public T Get<T>(String identifier) where T : IPloudObject
         {
             SQLiteConnection sqliteConnection = GetReadableConnection();
@@ -384,7 +411,7 @@ namespace Ploc.Ploud.Library
                 if (reader.Read())
                 {
                     ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider, true);
                 }
                 reader.Close();
             }
@@ -411,7 +438,7 @@ namespace Ploc.Ploud.Library
                 if (reader.Read())
                 {
                     ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider, true);
                 }
                 reader.Close();
             }
@@ -437,7 +464,7 @@ namespace Ploc.Ploud.Library
                 if (reader.Read())
                 {
                     ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider, true);
                 }
                 reader.Close();
             }
@@ -463,7 +490,7 @@ namespace Ploc.Ploud.Library
                 if (reader.Read())
                 {
                     ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider, true);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider, true);
                 }
                 reader.Close();
             }
@@ -489,7 +516,7 @@ namespace Ploc.Ploud.Library
                 while (reader.Read())
                 {
                     T ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider);
                     ploudObjects.Add(ploudObject);
                 }
                 reader.Close();
@@ -516,7 +543,7 @@ namespace Ploc.Ploud.Library
                 while (reader.Read())
                 {
                     T ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider);
                     ploudObjects.Add(ploudObject);
                 }
                 reader.Close();
@@ -543,7 +570,7 @@ namespace Ploc.Ploud.Library
                 while (reader.Read())
                 {
                     T ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider);
                     ploudObjects.Add(ploudObject);
                 }
                 reader.Close();
@@ -570,7 +597,7 @@ namespace Ploc.Ploud.Library
                 while (reader.Read())
                 {
                     T ploudObject = this.Cellar.CreateObject<T>();
-                    reader.MapDataToObject<T>(ploudObject, this.Cellar.CryptoProvider);
+                    reader.MapDataToObject(ploudObject, this.Cellar.CryptoProvider);
                     ploudObjects.Add(ploudObject);
                 }
                 reader.Close();

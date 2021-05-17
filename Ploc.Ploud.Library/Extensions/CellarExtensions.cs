@@ -46,6 +46,11 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.SaveAsync(ploudObjects);
         }
 
+        public static IPloudObject Get(this ICellar cellar, String identifier, Type ploudObjectType)
+        {
+            return cellar.Repository.Get(identifier, ploudObjectType);
+        }
+
         public static T Get<T>(this ICellar cellar, String identifier) where T : IPloudObject
         {
             return cellar.Repository.Get<T>(identifier);

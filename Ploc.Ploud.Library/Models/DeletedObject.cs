@@ -21,10 +21,25 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("ty")]
         [DataStore("type", false, true)]
-        public int Type { get; set; }
+        public PloudObjectType Type { get; set; }
 
         [JsonIgnore]
         public ICellar Cellar { get; set; }
+
+        [JsonIgnore]
+        public IPloudObject PloudObject
+        {
+            get
+            {
+                MappingToAttribute mappingToAttribute = this.Type.GetAttribute<MappingToAttribute>();
+                if(mappingToAttribute == null)
+                {
+                    throw new NotSupportedException(this.Type.ToString());
+                }
+                Type ploudObjectType = mappingToAttribute.Type;
+                return this.Cellar.Get(this.Identifier, ploudObjectType);
+            }
+        }
 
         public bool Save()
         {

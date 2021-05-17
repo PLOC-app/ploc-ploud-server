@@ -52,7 +52,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 });
             }
 
-            this.logger.LogInformation("Sync.Begin(), Token = {token}, LastSyncTime = {lastSyncTime}, Objects = {objectCount}",
+            this.logger.LogInformation("Sync.Begin(), Token = {Token}, LastSyncTime = {LastSyncTime}, Objects = {ObjectCount}",
                 request.Token,
                 request.LastSyncTime,
                 request.Objects == null ? -1 : request.Objects.Count);
@@ -60,7 +60,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
-                this.logger.LogWarning("Sync.Validate(), Status = {validationStatus}", validationStatus);
+                this.logger.LogWarning("Sync.Validate(), Status = {ValidationStatus}", validationStatus);
                 return BadRequest(new
                 {
                     Error = validationStatus
@@ -92,7 +92,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if((String.IsNullOrEmpty(ploudFilePath))
                 || (!System.IO.File.Exists(ploudFilePath)))
             {
-                this.logger.LogWarning("Sync.GetPloudFilePath(), PloudFilePath = {ploudFilePath}", ploudFilePath);
+                this.logger.LogWarning("Sync.GetPloudFilePath(), PloudFilePath = {PloudFilePath}", ploudFilePath);
                 return NotFound(new
                 {
                     Error = ValidationStatus.PloudNotInitialized
@@ -105,7 +105,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             SyncResponse syncResponse = await request.SynchronizeAsync(this.syncService, syncSettings);
             if(syncResponse == null)
             {
-                this.logger.LogError("Sync.Synchronize(), PloudFilePath = {ploudFilePath}", ploudFilePath);
+                this.logger.LogError("Sync.Synchronize(), PloudFilePath = {PloudFilePath}", ploudFilePath);
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     Error = ValidationStatus.PloudNotInitialized
@@ -140,12 +140,12 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 });
             }
 
-            this.logger.LogInformation("Initialize.Begin(), Token = {token}", request.Token);
+            this.logger.LogInformation("Initialize.Begin(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
-                this.logger.LogWarning("Initialize.Validate(), Status = {validationStatus}", validationStatus);
+                this.logger.LogWarning("Initialize.Validate(), Status = {ValidationStatus}", validationStatus);
                 return BadRequest(new
                 {
                     Error = validationStatus
@@ -176,7 +176,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             if (System.IO.File.Exists(ploudFilePath))
             {
-                this.logger.LogError("Initialize.GetPloudFilePath(PloudAlreadyInitialized), PloudFilePath = {ploudFilePath}", ploudFilePath);
+                this.logger.LogError("Initialize.GetPloudFilePath(PloudAlreadyInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
                 return BadRequest(new
                 {
                     Error = ValidationStatus.PloudAlreadyInitialized
@@ -210,12 +210,12 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return BadRequest();
             }
 
-            this.logger.LogInformation("Unitialize.Begin(), Token = {token}", request.Token);
+            this.logger.LogInformation("Unitialize.Begin(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
-                this.logger.LogWarning("Unitialize.Validate(), Status = {validationStatus}", validationStatus);
+                this.logger.LogWarning("Unitialize.Validate(), Status = {ValidationStatus}", validationStatus);
                 return BadRequest(new
                 {
                     Error = validationStatus
@@ -229,7 +229,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 if ((signatureResponse == null)
                     || (!signatureResponse.IsValid))
                 {
-                    this.logger.LogWarning("Unitialize.VerifySignature(), Signature = {0}", signatureRequest.Signature);
+                    this.logger.LogWarning("Unitialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
                     return Forbid();
                 }
             }
@@ -239,14 +239,14 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if ((authenticationResponse == null)
                 || (!authenticationResponse.IsAuthenticated))
             {
-                this.logger.LogWarning("Unitialize.Authenticate(), Token = {0}", authenticationRequest.Token);
+                this.logger.LogWarning("Unitialize.Authenticate(), Token = {Token}", authenticationRequest.Token);
                 return Forbid();
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             if (!System.IO.File.Exists(ploudFilePath))
             {
-                this.logger.LogError("Uninitialize.GetPloudFilePath(PloudNotInitialized), PloudFilePath = {ploudFilePath}", ploudFilePath);
+                this.logger.LogError("Uninitialize.GetPloudFilePath(PloudNotInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
                 return BadRequest(new
                 {
                     Error = ValidationStatus.PloudNotInitialized
@@ -280,12 +280,12 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return BadRequest();
             }
 
-            this.logger.LogInformation("GetDocument.Begin(), Token = {token}, Document = {document}", request.Token, request.Document);
+            this.logger.LogInformation("GetDocument.Begin(), Token = {Token}, Document = {Document}", request.Token, request.Document);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
-                this.logger.LogWarning("GetDocument.Validate(), Status = {validationStatus}", validationStatus);
+                this.logger.LogWarning("GetDocument.Validate(), Status = {ValidationStatus}", validationStatus);
                 return BadRequest(new
                 {
                     Error = validationStatus
@@ -316,7 +316,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             if (!System.IO.File.Exists(ploudFilePath))
             {
-                this.logger.LogError("Uninitialize.GetPloudFilePath(PloudNotInitialized), PloudFilePath = {ploudFilePath}", ploudFilePath);
+                this.logger.LogError("Uninitialize.GetPloudFilePath(PloudNotInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
                 return BadRequest(new
                 {
                     Error = ValidationStatus.PloudNotInitialized
@@ -347,12 +347,12 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return BadRequest();
             }
 
-            this.logger.LogInformation("Status.Begin(), Token = {token}", request.Token);
+            this.logger.LogInformation("Status.Begin(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
-                this.logger.LogWarning("Status.Validate(), Status = {validationStatus}", validationStatus);
+                this.logger.LogWarning("Status.Validate(), Status = {ValidationStatus}", validationStatus);
                 return BadRequest(new
                 {
                     Error = validationStatus
@@ -366,7 +366,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 if ((signatureResponse == null)
                     || (!signatureResponse.IsValid))
                 {
-                    this.logger.LogWarning("Status.VerifySignature(), Signature = {0}", signatureRequest.Signature);
+                    this.logger.LogWarning("Status.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
                     return Forbid();
                 }
             }
@@ -376,7 +376,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if ((authenticationResponse == null)
                 || (!authenticationResponse.IsAuthenticated))
             {
-                this.logger.LogWarning("Status.Authenticate(), Token = {0}", authenticationRequest.Token);
+                this.logger.LogWarning("Status.Authenticate(), Token = {Token}", authenticationRequest.Token);
                 return Forbid();
             }
 

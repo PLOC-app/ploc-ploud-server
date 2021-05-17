@@ -54,6 +54,17 @@ namespace Ploc.Ploud.Library
             return obj;
         }
 
+        public IPloudObject CreateObject(Type ploudObjectType)
+        {
+            IPloudObject obj = Activator.CreateInstance(ploudObjectType) as IPloudObject;
+            if(obj == null)
+            {
+                throw new ArgumentException(String.Concat(ploudObjectType.ToString(), " != IPloudObject"));
+            }
+            obj.Cellar = this;
+            return obj;
+        }
+
         private void InitializeCryptoProvider()
         {
             this.Repository.CreateStorage<PloudSecret>();

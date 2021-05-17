@@ -12,14 +12,14 @@ namespace Ploc.Ploud.Library
 {
     public static class DbDataReaderExtensions
     {
-        public static void MapDataToObject<T>(this DbDataReader dataReader, T obj, ICryptoProvider cryptoProvider)
+        public static void MapDataToObject(this DbDataReader dataReader, IPloudObject obj, ICryptoProvider cryptoProvider)
         {
-            MapDataToObject<T>(dataReader, obj, cryptoProvider, false);
+            MapDataToObject(dataReader, obj, cryptoProvider, false);
         }
 
-        public static void MapDataToObject<T>(this DbDataReader dataReader, T obj, ICryptoProvider cryptoProvider, bool loadBinaryData)
+        public static void MapDataToObject(this DbDataReader dataReader, IPloudObject obj, ICryptoProvider cryptoProvider, bool loadBinaryData)
         {
-            Type typeOfT = typeof(T);
+            Type typeOfT = obj.GetType();
             PropertyInfo[] properties = typeOfT.GetProperties(); // TODO à mettre en cache
             foreach (PropertyInfo propertyInfo in properties)
             {

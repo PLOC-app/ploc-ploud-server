@@ -1,4 +1,6 @@
-﻿using Ploc.Ploud.Library;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Ploc.Ploud.Library;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +10,13 @@ namespace Ploc.Ploud.Api
 {
     public sealed class SyncService : ISyncService
     {
+        private readonly ILogger<ISyncService> logger;
+
+        public SyncService(ILogger<ISyncService> logger)
+        {
+            this.logger = logger;
+        }
+
         public async Task<SyncResponse> SynchronizeAsync(SyncRequest syncRequest, SyncSettings syncSettings)
         {
             ICellar cellar = new Cellar(syncSettings.PloudFilePath);
@@ -16,19 +25,66 @@ namespace Ploc.Ploud.Api
                 return null;
             }
 
-            // 1. Récupérer et appliquer les changements
+            SyncObjects syncObjects = syncRequest.Objects;
 
+            // 1. Retrieve and apply changes
 
-            // 2. Envoyer les changements depuis la dernière synchro
+            // .Copy file into document bytes[] 
+            int numberOfDocuments = syncRequest.Objects.GetCount(syncObjects.Documents);
+            int numberOfFiles = syncRequest.Files == null ? 0 : syncRequest.Files.Count;
+            if(numberOfDocuments != numberOfFiles)
+            {
+                this.logger.LogError("SyncService.SynchronizeAsync({Token}), {NumberOfDocuments} != {NumberOfFiles}", syncRequest.Token, numberOfDocuments, numberOfFiles);
+                return null;
+            }
+            if(numberOfFiles > 0)
+            {
+                for(int position = 0; position < numberOfFiles; position++)
+                {
+                    Document inputDocument = syncObjects.Documents[position];
+                    IFormFile inputFile = syncRequest.Files[position];
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        inputFile.CopyTo(memoryStream);
+                        inputDocument.Data = memoryStream.ToArray();
+                    }
+                }
+            }
+
+            // .Delete objects
+            if((syncObjects.DeletedObjects != null)
+                && (syncObjects.DeletedObjects.Count > 0))
+            {
+                PloudObjectCollection<IPloudObject> ploudObjectsToDelete = new PloudObjectCollection<IPloudObject>();
+                foreach(DeletedObject deletedObject in syncObjects.DeletedObjects)
+                {
+                    IPloudObject ploudObjectToDelete = deletedObject.PloudObject;
+                    if(ploudObjectToDelete == null)
+                    {
+                        continue;
+                    }
+                    ploudObjectsToDelete.Add(ploudObjectToDelete);
+                }
+                await cellar.DeleteAsync(ploudObjectsToDelete);
+            }
+
+            // .Send changes to the database
+            PloudObjectCollection<IPloudObject> ploudObjectsToUpdate = syncObjects.AllObjects();
+            if((ploudObjectsToUpdate != null) 
+                && (ploudObjectsToUpdate.Count > 0))
+            {
+                await cellar.SaveAsync(ploudObjectsToUpdate);
+            }
+
+            // 2. Send changes since the last sync
             SyncObjectsOptions syncObjectsOptions = new SyncObjectsOptions(syncRequest.LastSyncTime, syncRequest.Device);
             SyncResponse syncResponse = new SyncResponse();
             syncResponse.Objects = await cellar.GetSyncObjectsAsync(syncObjectsOptions);
 
-            // 3. Réecrire si besoin les URLS des documents
+            // 3. Write the URLS
             syncResponse.Objects.Documents.MapUrl(syncSettings.DownloadFileUrlFormat);
 
-
-            return null;
+            return syncResponse;
         }
 
         public async Task<Document> GetDocumentAsync(DocumentRequest documentRequest, SyncSettings syncSettings)

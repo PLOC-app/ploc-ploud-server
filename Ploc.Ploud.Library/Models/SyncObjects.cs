@@ -41,6 +41,82 @@ namespace Ploc.Ploud.Library
 
         public PloudObjectCollection<DeletedObject> DeletedObjects { get; set; }
 
+        public PloudObjectCollection<IPloudObject> AllObjects()
+        {
+            PloudObjectCollection<IPloudObject> allObjects = new PloudObjectCollection<IPloudObject>();
+            if((this.Countries != null)
+                && (this.Countries.Count > 0))
+            {
+                allObjects.AddRange(this.Countries);
+            }
+            if ((this.Regions != null)
+                && (this.Regions.Count > 0))
+            {
+                allObjects.AddRange(this.Regions);
+            }
+            if ((this.Appellations != null)
+                && (this.Appellations.Count > 0))
+            {
+                allObjects.AddRange(this.Appellations);
+            }
+            if ((this.Colors != null)
+                && (this.Colors.Count > 0))
+            {
+                allObjects.AddRange(this.Colors);
+            }
+            if ((this.Classifications != null)
+                && (this.Classifications.Count > 0))
+            {
+                allObjects.AddRange(this.Classifications);
+            }
+            if ((this.Grapes != null)
+                && (this.Grapes.Count > 0))
+            {
+                allObjects.AddRange(this.Grapes);
+            }
+            if ((this.Owners != null)
+                && (this.Owners.Count > 0))
+            {
+                allObjects.AddRange(this.Owners);
+            }
+            if ((this.Vendors != null)
+                && (this.Vendors.Count > 0))
+            {
+                allObjects.AddRange(this.Vendors);
+            }
+            if ((this.Documents != null)
+                && (this.Documents.Count > 0))
+            {
+                allObjects.AddRange(this.Documents);
+            }
+            if ((this.GlobalParameters != null)
+                && (this.GlobalParameters.Count > 0))
+            {
+                allObjects.AddRange(this.GlobalParameters);
+            }
+            if ((this.Racks != null)
+                && (this.Racks.Count > 0))
+            {
+                allObjects.AddRange(this.Racks);
+            }
+            if ((this.RackItems != null)
+                && (this.RackItems.Count > 0))
+            {
+                allObjects.AddRange(this.RackItems);
+            }
+            if ((this.Orders != null)
+                && (this.Orders.Count > 0))
+            {
+                allObjects.AddRange(this.Orders);
+            }
+            if ((this.DeletedObjects != null)
+                && (this.DeletedObjects.Count > 0))
+            {
+                allObjects.AddRange(this.DeletedObjects);
+            }
+            return allObjects;
+        }
+
         internal void RemoveEmptyCollection()
         {
             if(this.Countries.Count == 0)
@@ -122,7 +198,7 @@ namespace Ploc.Ploud.Library
             }
         }
 
-        private int GetCount(IList ploudObjects)
+        public int GetCount(IList ploudObjects)
         {
             return ploudObjects == null ? 0 : ploudObjects.Count;
         }

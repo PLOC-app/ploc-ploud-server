@@ -24,7 +24,27 @@ namespace Ploc.Ploud.Api
             {
                 return ValidationStatus.InvalidParams;
             }
+            if(!ValidateFiles())
+            {
+                return ValidationStatus.InvalidParams;
+            }
             return ValidationStatus.Ok;
+        }
+
+        private bool ValidateFiles()
+        {
+            if((this.Files != null)
+                && (this.Files.Count > 0))
+            {
+                foreach(IFormFile formFile in this.Files)
+                {
+                    if(formFile.Length == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Ploc.Ploud.Library
 
         Task<bool> SaveAsync<T>(IEnumerable<T> ploudObjects) where T : IPloudObject;
 
+        IPloudObject Get(String identifier, Type ploudObjectType);
+
         T Get<T>(String identifier) where T : IPloudObject;
 
         T Get<T>(IQuery query) where T : IPloudObject;
