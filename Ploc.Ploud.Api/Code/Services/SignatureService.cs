@@ -9,7 +9,7 @@ namespace Ploc.Ploud.Api
 {
     public class SignatureService : ISignatureService
     {
-        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "signature/ploud/");
+        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "Signature/Ploud/Verify");
 
         public async Task<SignatureResponse> VerifySignatureAsync(SignatureRequest signatureRequest)
         {

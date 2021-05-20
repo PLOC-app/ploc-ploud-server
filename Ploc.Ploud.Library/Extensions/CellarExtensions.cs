@@ -95,5 +95,20 @@ namespace Ploc.Ploud.Library
         {
             return cellar.Execute(cellarOperation);
         }
+
+        public static Task<bool> ExecuteAsync(this ICellar cellar, CellarOperation cellarOperation)
+        {
+            return cellar.ExecuteAsync(cellarOperation);
+        }
+
+        public static bool CopyTo(this ICellar cellar, String targetCellarPath)
+        {
+            return cellar.CopyTo(targetCellarPath);
+        }
+
+        public static Task<bool> CopyToAsync(this ICellar cellar, String targetCellarPath)
+        {
+            return cellar.CopyToAsync(targetCellarPath);
+        }
     }
 }

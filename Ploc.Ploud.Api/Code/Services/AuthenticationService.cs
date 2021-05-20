@@ -13,7 +13,7 @@ namespace Ploc.Ploud.Api
 {
     public class AuthenticationService  : IAuthenticationService
     {
-        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "authorization/ploud/");
+        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "Authorization/Ploud/");
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest authenticationRequest)
         {

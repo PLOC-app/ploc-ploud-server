@@ -45,5 +45,11 @@ namespace Ploc.Ploud.Library
         Task<PloudObjectCollection<T>> GetAllAsync<T>() where T : IPloudObject;
 
         bool Execute(CellarOperation cellarOperation);
+
+        Task<bool> ExecuteAsync(CellarOperation cellarOperation);
+
+        bool CopyTo(String targetCellarPath);
+
+        Task<bool> CopyToAsync(String targetCellarPath);
     }
 }

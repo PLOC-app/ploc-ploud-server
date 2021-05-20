@@ -21,7 +21,7 @@ namespace Ploc.Ploud.Api
 
         public String Device { get; set; }
 
-        public String PublicKey { get; set; } // Taken from Appsettings.json
+        public Guid PublicKey { get; set; } // Taken from Appsettings.json
 
         [JsonIgnore]
         public DateTime RequestTime

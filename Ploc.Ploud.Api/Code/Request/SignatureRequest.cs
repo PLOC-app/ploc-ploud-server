@@ -12,13 +12,17 @@ namespace Ploc.Ploud.Api
         {
             public const String Initialize = "initialize";
 
-            public const String Unnitialize = "uninitialize";
+            public const String Uninitialize = "uninitialize";
 
             public const String Status = "status";
 
             public const String Sync = "sync";
+
+            public const String GetDocument = "getdocument";
         }
 
         public String Method { get; set; }
+
+        public String ObjectId { get; set; }
     }
 }

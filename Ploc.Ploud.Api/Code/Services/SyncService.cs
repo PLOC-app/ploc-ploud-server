@@ -32,14 +32,14 @@ namespace Ploc.Ploud.Api
             // .Copy file into document bytes[] 
             int numberOfDocuments = syncRequest.Objects.GetCount(syncObjects.Documents);
             int numberOfFiles = syncRequest.Files == null ? 0 : syncRequest.Files.Count;
-            if(numberOfDocuments != numberOfFiles)
+            if (numberOfDocuments != numberOfFiles)
             {
                 this.logger.LogError("SyncService.SynchronizeAsync({Token}), {NumberOfDocuments} != {NumberOfFiles}", syncRequest.Token, numberOfDocuments, numberOfFiles);
                 return null;
             }
-            if(numberOfFiles > 0)
+            if (numberOfFiles > 0)
             {
-                for(int position = 0; position < numberOfFiles; position++)
+                for (int position = 0; position < numberOfFiles; position++)
                 {
                     Document inputDocument = syncObjects.Documents[position];
                     IFormFile inputFile = syncRequest.Files[position];
@@ -52,14 +52,14 @@ namespace Ploc.Ploud.Api
             }
 
             // .Delete objects
-            if((syncObjects.DeletedObjects != null)
+            if ((syncObjects.DeletedObjects != null)
                 && (syncObjects.DeletedObjects.Count > 0))
             {
                 PloudObjectCollection<IPloudObject> ploudObjectsToDelete = new PloudObjectCollection<IPloudObject>();
-                foreach(DeletedObject deletedObject in syncObjects.DeletedObjects)
+                foreach (DeletedObject deletedObject in syncObjects.DeletedObjects)
                 {
                     IPloudObject ploudObjectToDelete = deletedObject.PloudObject;
-                    if(ploudObjectToDelete == null)
+                    if (ploudObjectToDelete == null)
                     {
                         continue;
                     }
@@ -70,7 +70,7 @@ namespace Ploc.Ploud.Api
 
             // .Send changes to the database
             PloudObjectCollection<IPloudObject> ploudObjectsToUpdate = syncObjects.AllObjects();
-            if((ploudObjectsToUpdate != null) 
+            if ((ploudObjectsToUpdate != null)
                 && (ploudObjectsToUpdate.Count > 0))
             {
                 await cellar.SaveAsync(ploudObjectsToUpdate);
@@ -90,21 +90,42 @@ namespace Ploc.Ploud.Api
         public async Task<Document> GetDocumentAsync(DocumentRequest documentRequest, SyncSettings syncSettings)
         {
             ICellar cellar = new Cellar(syncSettings.PloudFilePath);
-            if(!cellar.IsValid())
+            if (!cellar.IsValid())
             {
                 return null;
             }
             return await cellar.GetAsync<Document>(documentRequest.Document);
         }
 
+        public async Task<String> PrepareForDownloadAsync(DownloadRequest request, SyncSettings syncSettings)
+        {
+            if ((String.IsNullOrEmpty(syncSettings.PloudFilePath))
+                || (!File.Exists(syncSettings.PloudFilePath)))
+            {
+                return null;
+            }
+
+            String randomFileName = String.Concat(Guid.NewGuid(), ".config");
+            String cellarFilePath = Path.Combine(syncSettings.PloudDirectory, randomFileName);
+
+            ICellar sourceCellar = new Cellar(syncSettings.PloudFilePath);
+            await sourceCellar.CopyToAsync(cellarFilePath);
+
+            ICellar targetCellar = new Cellar(cellarFilePath);
+            await targetCellar.ExecuteAsync(CellarOperation.Decrypt);
+
+            bool isValid = targetCellar.IsValid();
+            return isValid ? cellarFilePath : null;
+        }
+
         public async Task<bool> InitializeAsync(InitializeRequest request, SyncSettings syncSettings)
         {
-            if(request.File == null)
+            if (request.File == null)
             {
                 return false;
             }
 
-            if(!Directory.Exists(syncSettings.PloudDirectory))
+            if (!Directory.Exists(syncSettings.PloudDirectory))
             {
                 Directory.CreateDirectory(syncSettings.PloudDirectory);
             }

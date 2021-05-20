@@ -90,7 +90,7 @@ namespace Ploc.Ploud.Library
                 catch (Exception ex)
                 {
                     Logger.Error(ex);
-                    Thread.Sleep(Config.Data.RetryDelay);
+                    await Task.Delay(Config.Data.RetryDelay);
                     if (++retryCount > Config.Data.MaxRetries)
                     {
                         break;
@@ -632,6 +632,32 @@ namespace Ploc.Ploud.Library
             return status;
         }
 
+        public async Task<bool> ExecuteAsync(CellarOperation cellarOperation)
+        {
+            bool status;
+            if (cellarOperation == CellarOperation.Compress)
+            {
+                status = await this.CompressAsync();
+            }
+            else if (cellarOperation == CellarOperation.Encrypt)
+            {
+                status = await this.EncryptAsync();
+            }
+            else if (cellarOperation == CellarOperation.Decrypt)
+            {
+                status = await this.DecryptAsync();
+            }
+            else if (cellarOperation == CellarOperation.Validate)
+            {
+                status = await this.ValidateAsync();
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+            return status;
+        }
+
         private bool Compress()
         {
             SQLiteConnection sqliteConnection = GetWriteableConnection();
@@ -647,6 +673,24 @@ namespace Ploc.Ploud.Library
                 command.ExecuteNonQueryWithRetry();
             }
             this.CloseWriteableConnection(sqliteConnection);
+            return true;
+        }
+
+        private async Task<bool> CompressAsync()
+        {
+            SQLiteConnection sqliteConnection = await GetWriteableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = "VACUUM;";
+                await command.ExecuteNonQueryWithRetryAsync();
+            }
+            await this.CloseWriteableConnectionAsync(sqliteConnection);
             return true;
         }
 
@@ -666,6 +710,25 @@ namespace Ploc.Ploud.Library
                 command.ExecuteNonQueryWithRetry();
             }
             this.CloseReadableConnection(sqliteConnection);
+            return count == 3;
+        }
+
+        private async Task<bool> ValidateAsync()
+        {
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            int count = 0;
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                command.CommandText = "SELECT count(*) from sql_master where name in ('rackitem', 'wine', 'globalparameter');";
+                await command.ExecuteNonQueryWithRetryAsync();
+            }
+            await this.CloseReadableConnectionAsync(sqliteConnection);
             return count == 3;
         }
 
@@ -703,6 +766,43 @@ namespace Ploc.Ploud.Library
                 command.Encrypt<Wine>();
             }
             this.CloseWriteableConnection(sqliteConnection);
+            return true;
+        }
+
+        private async Task<bool> EncryptAsync()
+        {
+            SQLiteConnection sqliteConnection = await GetWriteableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+
+            sqliteConnection.BindFunction(new SQLiteFunctionAttribute("ploudEncrypt", 1, FunctionType.Scalar),
+                (Func<object[], object>)((object[] args) => this.Cellar.CryptoProvider.Encrypt((string)((object[])args[1])[0])),
+                null);
+
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                await command.EncryptAsync<Appellation>();
+                await command.EncryptAsync<BottleFormat>();
+                await command.EncryptAsync<Classification>();
+                await command.EncryptAsync<Color>();
+                await command.EncryptAsync<Country>();
+                await command.EncryptAsync<Document>();
+                await command.EncryptAsync<GlobalParameter>();
+                await command.EncryptAsync<Grapes>();
+                await command.EncryptAsync<Order>();
+                await command.EncryptAsync<Owner>();
+                await command.EncryptAsync<Rack>();
+                await command.EncryptAsync<RackItem>();
+                await command.EncryptAsync<Region>();
+                await command.EncryptAsync<TastingNotes>();
+                await command.EncryptAsync<Vendor>();
+                await command.EncryptAsync<Wine>();
+            }
+            await this.CloseWriteableConnectionAsync(sqliteConnection);
             return true;
         }
 
@@ -747,6 +847,82 @@ namespace Ploc.Ploud.Library
                 command.ExecuteNonQueryWithRetry();
             }
             this.CloseWriteableConnection(sqliteConnection);
+            return true;
+        }
+
+        private async Task<bool> DecryptAsync()
+        {
+            SQLiteConnection sqliteConnection = await GetWriteableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+
+            sqliteConnection.BindFunction(new SQLiteFunctionAttribute("ploudDecrypt", 1, FunctionType.Scalar),
+                (Func<object[], object>)((object[] args) => this.Cellar.CryptoProvider.Decrypt((string)((object[])args[1])[0])),
+                null);
+
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                await command.DecryptAsync<Appellation>();
+                await command.DecryptAsync<BottleFormat>();
+                await command.DecryptAsync<Classification>();
+                await command.DecryptAsync<Color>();
+                await command.DecryptAsync<Country>();
+                await command.DecryptAsync<Document>();
+                await command.DecryptAsync<GlobalParameter>();
+                await command.DecryptAsync<Grapes>();
+                await command.DecryptAsync<Order>();
+                await command.DecryptAsync<Owner>();
+                await command.DecryptAsync<Rack>();
+                await command.DecryptAsync<RackItem>();
+                await command.DecryptAsync<Region>();
+                await command.DecryptAsync<TastingNotes>();
+                await command.DecryptAsync<Vendor>();
+                await command.DecryptAsync<Wine>();
+
+                command.Parameters.Clear();
+                command.CommandText = "DROP TABLE mbw;";
+                await command.ExecuteNonQueryWithRetryAsync();
+
+                command.CommandText = "VACUUM;";
+                await command.ExecuteNonQueryWithRetryAsync();
+            }
+            await this.CloseWriteableConnectionAsync(sqliteConnection);
+            return true;
+        }
+
+        public bool CopyTo(String targetCellarPath)
+        {
+            SQLiteConnection sqliteConnection = GetReadableConnection();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandText = String.Format("VACUUM INTO '{0}'", targetCellarPath);
+                command.ExecuteNonQueryWithRetry();
+            }
+            this.CloseReadableConnection(sqliteConnection);
+            return true;
+        }
+
+        public async Task<bool> CopyToAsync(String targetCellarPath)
+        {
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandText = String.Format("VACUUM INTO '{0}'", targetCellarPath);
+                await command.ExecuteNonQueryWithRetryAsync();
+            }
+            await this.CloseReadableConnectionAsync(sqliteConnection);
             return true;
         }
     }

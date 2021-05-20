@@ -54,6 +54,11 @@ namespace Ploc.Ploud.Api
             return await syncService.UninitializeAsync(request, syncSettings);
         }
 
+        public static async Task<String> PrepareForDownloadAsync(this DownloadRequest request, ISyncService syncService, SyncSettings syncSettings)
+        {
+            return await syncService.PrepareForDownloadAsync(request, syncSettings);
+        }
+
         private static MemoryCacheEntryOptions CreateMemoryCacheEntryOptions()
         {
             return new MemoryCacheEntryOptions
@@ -62,7 +67,7 @@ namespace Ploc.Ploud.Api
             };
         }
 
-        public static AuthenticationRequest ToAuthenticationRequest(this RequestBase request, String publicKey)
+        public static AuthenticationRequest ToAuthenticationRequest(this RequestBase request, Guid publicKey)
         {
             return new AuthenticationRequest()
             {
@@ -72,7 +77,7 @@ namespace Ploc.Ploud.Api
             };
         }
 
-        public static SignatureRequest ToSignatureRequest(this RequestBase request, String publicKey, String method)
+        public static SignatureRequest ToSignatureRequest(this RequestBase request, Guid publicKey, String method)
         {
             return new SignatureRequest()
             {
@@ -86,7 +91,22 @@ namespace Ploc.Ploud.Api
             };
         }
 
-        public static NotificationRequest ToNotificationRequest(this RequestBase request, String publicKey)
+        public static SignatureRequest ToSignatureRequest(this RequestBase request, Guid publicKey, String method, String objectId)
+        {
+            return new SignatureRequest()
+            {
+                Signature = request.Signature,
+                Timestamp = request.Timestamp,
+                LastSyncTime = request.LastSyncTime,
+                Token = request.Token,
+                PublicKey = publicKey,
+                Device = request.Device,
+                Method = method,
+                ObjectId = objectId
+            };
+        }
+
+        public static NotificationRequest ToNotificationRequest(this RequestBase request, Guid publicKey)
         {
             return new NotificationRequest()
             {

@@ -12,6 +12,8 @@ namespace Ploc.Ploud.Api
 
         Task<Document> GetDocumentAsync(DocumentRequest documentRequest, SyncSettings syncSettings);
 
+        Task<String> PrepareForDownloadAsync(DownloadRequest request, SyncSettings syncSettings);
+
         Task<bool> InitializeAsync(InitializeRequest request, SyncSettings syncSettings);
 
         Task<bool> UninitializeAsync(UninitializeRequest request, SyncSettings syncSettings);

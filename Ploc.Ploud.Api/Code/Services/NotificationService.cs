@@ -9,7 +9,7 @@ namespace Ploc.Ploud.Api
 {
     public class NotificationService : INotificationService
     {
-        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "notifications/ploud/send");
+        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "Notifications/Ploud/SyncComplete");
 
         public async Task<NotificationResponse> NotifyAsync(NotificationRequest notificationRequest)
         {
