@@ -116,14 +116,28 @@ namespace Ploc.Ploud.Library
             return Convert.ToBase64String(cypherText);
         }
 
-        public void ExportRsaKeysTo(String filePath)
+        public String ExportRsaKey()
         {
-            if (File.Exists(filePath))
+            return rsaCryptoServiceProvider.ToXmlString(true);
+        }
+
+        public bool ImportRsaKey(String data)
+        {
+            if (String.IsNullOrEmpty(data))
             {
-                File.Delete(filePath);
+                return false;
             }
-            String xml = rsaCryptoServiceProvider.ToXmlString(true);
-            File.WriteAllText(filePath, xml);
+            bool success = false;
+            try
+            {
+                this.rsaCryptoServiceProvider.FromXmlString(data);
+                success = true;
+            }
+            catch
+            {
+
+            }
+            return success;
         }
 
         private RSACryptoServiceProvider CreateProvider()
@@ -134,6 +148,7 @@ namespace Ploc.Ploud.Library
                 {
                     KeyContainerName = KeyContainerName
                 };
+                cspParameters.Flags |= CspProviderFlags.UseMachineKeyStore;
                 return new RSACryptoServiceProvider(KeySize, cspParameters);
             }
             throw new NotSupportedException();
