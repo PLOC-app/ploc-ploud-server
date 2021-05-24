@@ -5,11 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Ploc.Ploud.Api
 {
@@ -25,11 +21,13 @@ namespace Ploc.Ploud.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // services.AddOptions();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
             services.AddSingleton<ISignatureService, SignatureService>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<ISyncService, SyncService>();
-            services.AddSingleton(Configuration.GetSection("Ploud").Get<PloudSettings>());
+            services.Configure<PloudSettings>(Configuration.GetSection("Ploud"));
+            services.AddSingleton<PloudSettings>(serviceProvider => serviceProvider.GetService<IOptions<PloudSettings>>().Value);
             services.AddControllers();
             services.AddMemoryCache();
             services.AddApplicationInsightsTelemetry();

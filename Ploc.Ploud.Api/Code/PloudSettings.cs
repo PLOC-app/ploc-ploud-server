@@ -12,8 +12,6 @@ namespace Ploc.Ploud.Api
 
         public String Directory { get; set; }
 
-        public String VirtualDirectory { get; set; }
-
         public String Url { get; set; }
 
         public bool VerifySignature { get; set; }
