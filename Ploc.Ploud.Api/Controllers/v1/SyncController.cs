@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -12,7 +11,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
 {
     [Route("v1/[controller]")]
     [ApiController]
-    public class SyncController : ControllerBase
+    public class SyncController : ApiControllerBase
     {
         private readonly IMemoryCache memoryCache;
         private readonly IAuthenticationService authenticationService;
@@ -46,13 +45,10 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if(request == null)
             {
                 this.logger.LogWarning("Sync(), Request = NULL");
-                return BadRequest(new
-                {
-                    Error = ValidationStatus.InvalidParams
-                });
+                return BadRequest(ValidationStatus.InvalidParams);
             }
 
-            this.logger.LogInformation("Sync.Begin(), Token = {Token}, LastSyncTime = {LastSyncTime}, Objects = {ObjectCount}",
+            this.logger.LogInformation("Sync.Start(), Token = {Token}, LastSyncTime = {LastSyncTime}, Objects = {ObjectCount}",
                 request.Token,
                 request.LastSyncTime,
                 request.Objects == null ? -1 : request.Objects.Count);
@@ -61,10 +57,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if (validationStatus != ValidationStatus.Ok)
             {
                 this.logger.LogWarning("Sync.Validate(), Status = {ValidationStatus}", validationStatus);
-                return BadRequest(new
-                {
-                    Error = validationStatus
-                });
+                return BadRequest(validationStatus);
             }
 
             if (this.ploudSettings.VerifySignature)
@@ -75,7 +68,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                     || (!signatureResponse.IsValid))
                 {
                     this.logger.LogWarning("Sync.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
-                    return Forbid();
+                    return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
 
@@ -85,7 +78,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (!authenticationResponse.IsAuthenticated))
             {
                 this.logger.LogWarning("Sync.Authenticate(), Token = {Token}", authenticationRequest.Token);
-                return Forbid();
+                return Forbid(ValidationStatus.InvalidToken);
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
@@ -93,10 +86,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (!System.IO.File.Exists(ploudFilePath)))
             {
                 this.logger.LogWarning("Sync.GetPloudFilePath(), PloudFilePath = {PloudFilePath}", ploudFilePath);
-                return NotFound(new
-                {
-                    Error = ValidationStatus.PloudNotInitialized
-                });
+                return NotFound(ValidationStatus.PloudNotInitialized);
             }
 
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
@@ -106,10 +96,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if(syncResponse == null)
             {
                 this.logger.LogError("Sync.Synchronize(), PloudFilePath = {PloudFilePath}", ploudFilePath);
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    Error = ValidationStatus.PloudNotInitialized
-                });
+                return InternalServerError(ValidationStatus.PloudNotInitialized);
             }
 
             if((request.Objects != null) 
@@ -135,22 +122,16 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (request.File == null))
             {
                 this.logger.LogWarning("Initialize(), Request = NULL");
-                return BadRequest(new
-                {
-                    Error = ValidationStatus.InvalidParams
-                });
+                return BadRequest(ValidationStatus.InvalidParams);
             }
 
-            this.logger.LogInformation("Initialize.Begin(), Token = {Token}", request.Token);
+            this.logger.LogInformation("Initialize.Start(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
                 this.logger.LogWarning("Initialize.Validate(), Status = {ValidationStatus}", validationStatus);
-                return BadRequest(new
-                {
-                    Error = validationStatus
-                });
+                return BadRequest(validationStatus);
             }
 
             if (this.ploudSettings.VerifySignature)
@@ -161,7 +142,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                     || (!signatureResponse.IsValid))
                 {
                     this.logger.LogWarning("Initialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
-                    return Forbid();
+                    return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
 
@@ -171,17 +152,14 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (!authenticationResponse.IsAuthenticated))
             {
                 this.logger.LogWarning("Initialize.Authenticate(), Token = {Token}", authenticationRequest.Token);
-                return Forbid();
+                return Forbid(ValidationStatus.InvalidToken);
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             if (System.IO.File.Exists(ploudFilePath))
             {
                 this.logger.LogError("Initialize.GetPloudFilePath(PloudAlreadyInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
-                return BadRequest(new
-                {
-                    Error = ValidationStatus.PloudAlreadyInitialized
-                });
+                return BadRequest(ValidationStatus.PloudAlreadyInitialized);
             }
 
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
@@ -189,10 +167,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             bool success = await request.InitializeAsync(this.syncService, syncSettings);
             if (!success)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    Error = ValidationStatus.ServerError
-                });
+                return InternalServerError(ValidationStatus.ServerError);
             }
 
             return Ok(new
@@ -211,16 +186,13 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return BadRequest();
             }
 
-            this.logger.LogInformation("Unitialize.Begin(), Token = {Token}", request.Token);
+            this.logger.LogInformation("Unitialize.Start(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
                 this.logger.LogWarning("Unitialize.Validate(), Status = {ValidationStatus}", validationStatus);
-                return BadRequest(new
-                {
-                    Error = validationStatus
-                });
+                return BadRequest(validationStatus);
             }
 
             if (this.ploudSettings.VerifySignature)
@@ -231,7 +203,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                     || (!signatureResponse.IsValid))
                 {
                     this.logger.LogWarning("Unitialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
-                    return Forbid();
+                    return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
 
@@ -241,17 +213,14 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (!authenticationResponse.IsAuthenticated))
             {
                 this.logger.LogWarning("Unitialize.Authenticate(), Token = {Token}", authenticationRequest.Token);
-                return Forbid();
+                return Forbid(ValidationStatus.InvalidToken);
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             if (!System.IO.File.Exists(ploudFilePath))
             {
                 this.logger.LogError("Uninitialize.GetPloudFilePath(PloudNotInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
-                return BadRequest(new
-                {
-                    Error = ValidationStatus.PloudNotInitialized
-                });
+                return BadRequest(ValidationStatus.PloudNotInitialized);
             }
 
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
@@ -259,10 +228,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             bool success = await request.UninitializeAsync(this.syncService, syncSettings);
             if (!success)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    Error = ValidationStatus.ServerError
-                });
+                return InternalServerError(ValidationStatus.ServerError);
             }
             return Ok(new
             {
@@ -281,16 +247,13 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return BadRequest();
             }
 
-            this.logger.LogInformation("GetDocument.Begin(), Token = {Token}, Document = {Document}", request.Token, request.Document);
+            this.logger.LogInformation("GetDocument.Start(), Token = {Token}, Document = {Document}", request.Token, request.Document);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
                 this.logger.LogWarning("GetDocument.Validate(), Status = {ValidationStatus}", validationStatus);
-                return BadRequest(new
-                {
-                    Error = validationStatus
-                });
+                return BadRequest(validationStatus);
             }
 
             if (this.ploudSettings.VerifySignature)
@@ -301,7 +264,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                     || (!signatureResponse.IsValid))
                 {
                     this.logger.LogWarning("GetDocument.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
-                    return Forbid();
+                    return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
 
@@ -311,17 +274,14 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (!authenticationResponse.IsAuthenticated))
             {
                 this.logger.LogWarning("GetDocument.Authenticate(), Token = {Token}", authenticationRequest.Token);
-                return Forbid();
+                return Forbid(ValidationStatus.InvalidToken);
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             if (!System.IO.File.Exists(ploudFilePath))
             {
                 this.logger.LogError("Uninitialize.GetPloudFilePath(PloudNotInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
-                return BadRequest(new
-                {
-                    Error = ValidationStatus.PloudNotInitialized
-                });
+                return BadRequest(ValidationStatus.PloudNotInitialized);
             }
 
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
@@ -330,10 +290,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if ((document == null)
                 || (document.Data == null))
             {
-                return StatusCode(StatusCodes.Status404NotFound, new
-                {
-                    Error = ValidationStatus.InvalidParams
-                });
+                return NotFound(ValidationStatus.InvalidParams);
             }
             return File(document.Data, "application/octet-stream", "PLOUD.file");
         }
@@ -348,16 +305,13 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return BadRequest();
             }
 
-            this.logger.LogInformation("Status.Begin(), Token = {Token}", request.Token);
+            this.logger.LogInformation("Status.Start(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
                 this.logger.LogWarning("Status.Validate(), Status = {ValidationStatus}", validationStatus);
-                return BadRequest(new
-                {
-                    Error = validationStatus
-                });
+                return BadRequest(validationStatus);
             }
 
             if (this.ploudSettings.VerifySignature)
@@ -368,7 +322,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                     || (!signatureResponse.IsValid))
                 {
                     this.logger.LogWarning("Status.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
-                    return Forbid();
+                    return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
 
@@ -378,7 +332,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (!authenticationResponse.IsAuthenticated))
             {
                 this.logger.LogWarning("Status.Authenticate(), Token = {Token}", authenticationRequest.Token);
-                return Forbid();
+                return Forbid(ValidationStatus.InvalidToken);
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
@@ -398,22 +352,16 @@ namespace Ploc.Ploud.Api.Controllers.v1
             if (request == null)
             {
                 this.logger.LogWarning("Download(), Request = NULL");
-                return BadRequest(new
-                {
-                    Error = ValidationStatus.InvalidParams
-                });
+                return BadRequest(ValidationStatus.InvalidParams);
             }
 
-            this.logger.LogInformation("Download.Begin(), Token = {Token}", request.Token);
+            this.logger.LogInformation("Download.Start(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
             if (validationStatus != ValidationStatus.Ok)
             {
                 this.logger.LogWarning("Download.Validate(), Status = {ValidationStatus}", validationStatus);
-                return BadRequest(new
-                {
-                    Error = validationStatus
-                });
+                return BadRequest(validationStatus);
             }
 
             if (this.ploudSettings.VerifySignature)
@@ -424,7 +372,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                     || (!signatureResponse.IsValid))
                 {
                     this.logger.LogWarning("Download.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
-                    return Forbid();
+                    return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
 
@@ -434,17 +382,14 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 || (!authenticationResponse.IsAuthenticated))
             {
                 this.logger.LogWarning("Download.Authenticate(), Token = {Token}", authenticationRequest.Token);
-                return Forbid();
+                return Forbid(ValidationStatus.InvalidToken);
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             if (!System.IO.File.Exists(ploudFilePath))
             {
                 this.logger.LogError("Download.GetPloudFilePath(PloudNotInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
-                return BadRequest(new
-                {
-                    Error = ValidationStatus.PloudNotInitialized
-                });
+                return BadRequest(ValidationStatus.PloudNotInitialized);
             }
 
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
@@ -452,10 +397,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             String cellarFilePath = await request.PrepareForDownloadAsync(this.syncService, syncSettings);
             if (String.IsNullOrEmpty(cellarFilePath))
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    Error = ValidationStatus.ServerError
-                });
+                return InternalServerError(ValidationStatus.ServerError);
             }
             using (Stream fileStream = new FileStream(cellarFilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.DeleteOnClose))
             {

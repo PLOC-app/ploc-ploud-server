@@ -148,7 +148,7 @@ namespace Ploc.Ploud.Library
                 {
                     KeyContainerName = KeyContainerName
                 };
-                cspParameters.Flags |= CspProviderFlags.UseMachineKeyStore;
+                cspParameters.Flags |= CspProviderFlags.UseMachineKeyStore | CspProviderFlags.UseArchivableKey | CspProviderFlags.NoPrompt;
                 return new RSACryptoServiceProvider(KeySize, cspParameters);
             }
             throw new NotSupportedException();

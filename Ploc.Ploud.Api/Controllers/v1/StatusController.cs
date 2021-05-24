@@ -11,7 +11,7 @@ namespace Ploc.Ploud.Api.Controllers
 {
     [Route("v1/[controller]")]
     [ApiController]
-    public class StatusController : ControllerBase
+    public class StatusController : ApiControllerBase
     {
         [HttpGet]
         public IActionResult Get()

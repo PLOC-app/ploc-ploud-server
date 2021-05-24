@@ -8,7 +8,7 @@ namespace Ploc.Ploud.Api.Controllers
 {
     [Route("v1/[controller]")]
     [ApiController]
-    public class GrantAccessController : ControllerBase
+    public class GrantAccessController : ApiControllerBase
     {
         private readonly PloudSettings ploudSettings;
 
