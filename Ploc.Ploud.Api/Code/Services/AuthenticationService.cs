@@ -17,8 +17,7 @@ namespace Ploc.Ploud.Api
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest authenticationRequest)
         {
-            AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-            authenticationResponse.IsAuthenticated = false;
+            AuthenticationResponse authenticationResponse = null;
             using (HttpClient client = new HttpClient())
             {
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl))
@@ -29,16 +28,12 @@ namespace Ploc.Ploud.Api
                         request.Content = stringContent;
                         using (HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false))
                         {
-                            dynamic content = await response.Content.ReadFromJsonAsync<ExpandoObject>();
-                            authenticationResponse.ErrorMessage = content.ErrorMessage;
-                            if (!response.IsSuccessStatusCode)
+                            authenticationResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                            if(authenticationResponse == null)
                             {
-                                return authenticationResponse;
+                                authenticationResponse = new AuthenticationResponse();
+                                authenticationResponse.IsAuthenticated = false;
                             }
-                            authenticationResponse.IsAuthenticated = content.IsAuthenticated;
-                            authenticationResponse.FolderName = content.FolderName;
-                            authenticationResponse.FileName = content.FileName;
-                            authenticationResponse.HashedMd5Email = content.HashedMd5Email;
                         }
                     }
                 }

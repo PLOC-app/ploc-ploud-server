@@ -83,6 +83,30 @@ namespace Ploc.Ploud.Library
             return ret;
         }
 
+        public static async Task<Int64> ExecuteScalarWithRetryAsync(this SQLiteCommand command)
+        {
+            Int64 ret = 0;
+            int retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    ret = Convert.ToInt64(command.ExecuteScalar());
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(new Exception(command.CommandText, ex));
+                    await Task.Delay(Config.Data.RetryDelay);
+                    if (++retryCount > Config.Data.MaxRetries)
+                    {
+                        break;
+                    }
+                }
+            }
+            return ret;
+        }
+
         public static void AsInsert(this SQLiteCommand command, IPloudObject ploudObject)
         {
             command.Parameters.Clear();
@@ -340,7 +364,7 @@ namespace Ploc.Ploud.Library
             }
             if (type == typeof(DateTime))
             {
-                long longValue = ((DateTime)value).LongValue();
+                long longValue = ((DateTime)value).GetSecondsSince1970();
                 command.Parameters.AddWithValue(name, longValue);
             }
             else if (type.IsEnum)

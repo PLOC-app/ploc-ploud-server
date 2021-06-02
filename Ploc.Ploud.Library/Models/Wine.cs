@@ -85,7 +85,7 @@ namespace Ploc.Ploud.Library
         [DataStore("cuvee")]
         public String Cuvee { get; set; }
 
-        [JsonPropertyName("ttgy")]
+        [JsonPropertyName("tg")]
         [DataStore("tags", true)]
         public String Tags { get; set; }
 

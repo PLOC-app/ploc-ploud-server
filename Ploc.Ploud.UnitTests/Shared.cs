@@ -44,7 +44,7 @@ namespace Ploc.Ploud.UnitTests
             return new Cellar(DatabasePath(key));
         }
 
-        static String DatabasePath (String key)
+        public static String DatabasePath (String key)
         { 
             if(!databases.ContainsKey(key))
             {

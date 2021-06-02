@@ -96,7 +96,7 @@ namespace Ploc.Ploud.Library
             }
             set
             {
-                throw new NotSupportedException();
+                this.Timestamp = value.GetSecondsSince1970();
             }
         }
     }

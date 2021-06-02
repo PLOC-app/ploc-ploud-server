@@ -11,7 +11,7 @@ namespace Ploc.Ploud.Api.Controllers
 {
     public class ApiControllerBase : ControllerBase
     {
-        public new IActionResult Forbid()
+        protected new IActionResult Forbid()
         {
             return StatusCode(StatusCodes.Status403Forbidden, new
             {
@@ -19,7 +19,7 @@ namespace Ploc.Ploud.Api.Controllers
             });
         }
 
-        public IActionResult Forbid(ValidationStatus validationError)
+        protected IActionResult Forbid(ValidationStatus validationError)
         {
             return StatusCode(StatusCodes.Status403Forbidden, new
             {
@@ -28,7 +28,7 @@ namespace Ploc.Ploud.Api.Controllers
             });
         }
 
-        public new IActionResult BadRequest()
+        protected new IActionResult BadRequest()
         {
             return StatusCode(StatusCodes.Status400BadRequest, new
             {
@@ -36,7 +36,7 @@ namespace Ploc.Ploud.Api.Controllers
             });
         }
 
-        public IActionResult BadRequest(ValidationStatus validationError)
+        protected IActionResult BadRequest(ValidationStatus validationError)
         {
             return StatusCode(StatusCodes.Status400BadRequest, new
             {
@@ -45,7 +45,7 @@ namespace Ploc.Ploud.Api.Controllers
             });
         }
 
-        public new IActionResult NotFound()
+        protected new IActionResult NotFound()
         {
             return StatusCode(StatusCodes.Status404NotFound, new
             {
@@ -53,7 +53,7 @@ namespace Ploc.Ploud.Api.Controllers
             });
         }
 
-        public IActionResult NotFound(ValidationStatus validationError)
+        protected IActionResult NotFound(ValidationStatus validationError)
         {
             return StatusCode(StatusCodes.Status404NotFound, new
             {
@@ -62,7 +62,7 @@ namespace Ploc.Ploud.Api.Controllers
             });
         }
 
-        public IActionResult InternalServerError()
+        protected IActionResult InternalServerError()
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {
@@ -70,7 +70,7 @@ namespace Ploc.Ploud.Api.Controllers
             });
         }
 
-        public IActionResult InternalServerError(ValidationStatus validationError)
+        protected IActionResult InternalServerError(ValidationStatus validationError)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new
             {

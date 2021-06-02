@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
@@ -41,7 +42,7 @@ namespace Ploc.Ploud.Library
 
         public PloudObjectCollection<DeletedObject> DeletedObjects { get; set; }
 
-        public PloudObjectCollection<IPloudObject> AllObjects()
+        public PloudObjectCollection<IPloudObject> AllObjects(ICellar cellar)
         {
             PloudObjectCollection<IPloudObject> allObjects = new PloudObjectCollection<IPloudObject>();
             if((this.Countries != null)
@@ -109,10 +110,25 @@ namespace Ploc.Ploud.Library
             {
                 allObjects.AddRange(this.Orders);
             }
+            if ((this.Wines != null)
+                && (this.Wines.Count > 0))
+            {
+                allObjects.AddRange(this.Wines);
+            }
+            if ((this.TastingNotes != null)
+                && (this.TastingNotes.Count > 0))
+            {
+                allObjects.AddRange(this.TastingNotes);
+            }
             if ((this.DeletedObjects != null)
                 && (this.DeletedObjects.Count > 0))
             {
                 allObjects.AddRange(this.DeletedObjects);
+            }
+            foreach(IPloudObject ploudObject in allObjects)
+            {
+                ploudObject.Cellar = cellar;
+                ploudObject.TimeLastModified = DateTime.UtcNow;
             }
             return allObjects;
         }
@@ -177,6 +193,7 @@ namespace Ploc.Ploud.Library
             }
         }
 
+        [JsonIgnore]
         public int Count
         {
             get

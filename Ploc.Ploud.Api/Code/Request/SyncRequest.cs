@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Ploc.Ploud.Api.Code.ModelBinders;
 using Ploc.Ploud.Library;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ namespace Ploc.Ploud.Api
 {
     public class SyncRequest : RequestBase
     {
+        [ModelBinder(BinderType = typeof(SyncObjectsBinder))]
         public SyncObjects Objects { get; set; }
 
         public List<IFormFile> Files { get; set; }

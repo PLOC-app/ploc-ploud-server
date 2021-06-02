@@ -42,7 +42,12 @@ namespace Ploc.Ploud.Library
 
         private String GetConnectionString()
         {
-            return String.Format("DataSource={0}", this.SqlitePath);
+            return this.GetConnectionString(this.SqlitePath);
+        }
+
+        private String GetConnectionString(String sqlitePath)
+        {
+            return String.Format("DataSource={0}", sqlitePath);
         }
 
         private SQLiteConnection GetReadableConnection()
@@ -701,13 +706,13 @@ namespace Ploc.Ploud.Library
             {
                 return false;
             }
-            int count = 0;
+            long count = 0;
             using (SQLiteCommand command = sqliteConnection.CreateCommand())
             {
                 command.CommandType = CommandType.Text;
                 command.CommandTimeout = CommandTimeout;
-                command.CommandText = "SELECT count(*) from sql_master where name in ('rackitem', 'wine', 'globalparameter');";
-                command.ExecuteNonQueryWithRetry();
+                command.CommandText = "SELECT count(*) from sqlite_master where name in ('rackitem', 'wine', 'globalparameter');";
+                count = command.ExecuteScalarWithRetry();
             }
             this.CloseReadableConnection(sqliteConnection);
             return count == 3;
@@ -720,13 +725,13 @@ namespace Ploc.Ploud.Library
             {
                 return false;
             }
-            int count = 0;
+            long count = 0;
             using (SQLiteCommand command = sqliteConnection.CreateCommand())
             {
                 command.CommandType = CommandType.Text;
                 command.CommandTimeout = CommandTimeout;
-                command.CommandText = "SELECT count(*) from sql_master where name in ('rackitem', 'wine', 'globalparameter');";
-                await command.ExecuteNonQueryWithRetryAsync();
+                command.CommandText = "SELECT count(*) from sqlite_master where name in ('rackitem', 'wine', 'globalparameter');";
+                count = await command.ExecuteScalarWithRetryAsync();
             }
             await this.CloseReadableConnectionAsync(sqliteConnection);
             return count == 3;
@@ -884,7 +889,11 @@ namespace Ploc.Ploud.Library
                 await command.DecryptAsync<Wine>();
 
                 command.Parameters.Clear();
-                command.CommandText = "DROP TABLE mbw;";
+                command.CommandText = "DELETE FROM mbw;";
+                await command.ExecuteNonQueryWithRetryAsync();
+
+                command.Parameters.Clear();
+                command.CommandText = "DELETE FROM globalparameter where title = 'deviceIdentifier';";
                 await command.ExecuteNonQueryWithRetryAsync();
 
                 command.CommandText = "VACUUM;";
@@ -896,34 +905,54 @@ namespace Ploc.Ploud.Library
 
         public bool CopyTo(String targetCellarPath)
         {
-            SQLiteConnection sqliteConnection = GetReadableConnection();
+            SQLiteConnection sqliteConnection = GetWriteableConnection();
             if (sqliteConnection == null)
             {
                 return false;
             }
-            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            bool status = false;
+            try
             {
-                command.CommandText = String.Format("VACUUM INTO '{0}'", targetCellarPath);
-                command.ExecuteNonQueryWithRetry();
+                using (SQLiteConnection destConnection = new SQLiteConnection(GetConnectionString(targetCellarPath)))
+                {
+                    destConnection.Open();
+                    sqliteConnection.BackupDatabase(destConnection, "main", "main", -1, null, -1);
+                    destConnection.Close();
+                }
+                status = true;
             }
-            this.CloseReadableConnection(sqliteConnection);
-            return true;
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            this.CloseWriteableConnection(sqliteConnection);
+            return status;
         }
 
         public async Task<bool> CopyToAsync(String targetCellarPath)
         {
-            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            SQLiteConnection sqliteConnection = await GetWriteableConnectionAsync();
             if (sqliteConnection == null)
             {
                 return false;
             }
-            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            bool status = false;
+            try
             {
-                command.CommandText = String.Format("VACUUM INTO '{0}'", targetCellarPath);
-                await command.ExecuteNonQueryWithRetryAsync();
+                using (SQLiteConnection destConnection = new SQLiteConnection(GetConnectionString(targetCellarPath)))
+                {
+                    destConnection.Open();
+                    sqliteConnection.BackupDatabase(destConnection, "main", "main", -1, null, -1);
+                    destConnection.Close();
+                }
+                status = true;
             }
-            await this.CloseReadableConnectionAsync(sqliteConnection);
-            return true;
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            await this.CloseWriteableConnectionAsync(sqliteConnection);
+            return status;
         }
     }
 }

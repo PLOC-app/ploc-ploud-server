@@ -17,7 +17,7 @@ namespace Ploc.Ploud.Library
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteNumberValue(value.LongValue());
+            writer.WriteNumberValue(value.GetSecondsSince1970());
         }
     }
 }

@@ -93,22 +93,22 @@ namespace Ploc.Ploud.Library
 
         public static bool Execute(this ICellar cellar, CellarOperation cellarOperation)
         {
-            return cellar.Execute(cellarOperation);
+            return cellar.Repository.Execute(cellarOperation);
         }
 
         public static Task<bool> ExecuteAsync(this ICellar cellar, CellarOperation cellarOperation)
         {
-            return cellar.ExecuteAsync(cellarOperation);
+            return cellar.Repository.ExecuteAsync(cellarOperation);
         }
 
         public static bool CopyTo(this ICellar cellar, String targetCellarPath)
         {
-            return cellar.CopyTo(targetCellarPath);
+            return cellar.Repository.CopyTo(targetCellarPath);
         }
 
         public static Task<bool> CopyToAsync(this ICellar cellar, String targetCellarPath)
         {
-            return cellar.CopyToAsync(targetCellarPath);
+            return cellar.Repository.CopyToAsync(targetCellarPath);
         }
     }
 }

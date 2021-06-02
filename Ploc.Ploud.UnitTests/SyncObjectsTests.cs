@@ -25,7 +25,7 @@ namespace Ploc.Ploud.UnitTests
         public void GetSyncObjecsShoudNotReturnObjects()
         {
             ICellar cellar = Shared.Cellar(GetType().Name);
-            SyncObjects syncObjects = cellar.GetSyncObjects(new SyncObjectsOptions(DateTime.UtcNow.LongValue(), "UnitTest"));
+            SyncObjects syncObjects = cellar.GetSyncObjects(new SyncObjectsOptions(DateTime.UtcNow.GetSecondsSince1970(), "UnitTest"));
             Assert.IsTrue(syncObjects.Count == 0);
         }
 
@@ -33,7 +33,7 @@ namespace Ploc.Ploud.UnitTests
         public async Task GetSyncObjecsShoudNotReturnObjectsAsync()
         {
             ICellar cellar = Shared.Cellar(GetType().Name);
-            SyncObjects syncObjects = await cellar.GetSyncObjectsAsync(new SyncObjectsOptions(DateTime.UtcNow.LongValue(), "UnitTest"));
+            SyncObjects syncObjects = await cellar.GetSyncObjectsAsync(new SyncObjectsOptions(DateTime.UtcNow.GetSecondsSince1970(), "UnitTest"));
             Assert.IsTrue(syncObjects.Count == 0);
         }
 

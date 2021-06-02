@@ -69,7 +69,7 @@ namespace Ploc.Ploud.Api
             }
 
             // .Send changes to the database
-            PloudObjectCollection<IPloudObject> ploudObjectsToUpdate = syncObjects.AllObjects();
+            PloudObjectCollection<IPloudObject> ploudObjectsToUpdate = syncObjects.AllObjects(cellar);
             if ((ploudObjectsToUpdate != null)
                 && (ploudObjectsToUpdate.Count > 0))
             {
@@ -157,6 +157,11 @@ namespace Ploc.Ploud.Api
 
         private void Delete(String fileOrDirectory)
         {
+            if((!Directory.Exists(fileOrDirectory))
+                && (!File.Exists(fileOrDirectory)))
+            {
+                return;
+            }
             FileAttributes fileAttributes = File.GetAttributes(fileOrDirectory);
             if (fileAttributes.HasFlag(FileAttributes.Directory))
             {

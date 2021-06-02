@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ploc.Ploud.Library;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Ploc.Ploud.Api.Controllers.v1
 {
@@ -38,13 +39,13 @@ namespace Ploc.Ploud.Api.Controllers.v1
             this.ploudSettings = options.Value;
         }
 
-        [Route("Sync")]
+        [Route("Exec")]
         [HttpPost]
-        public async Task<IActionResult> Sync(SyncRequest request)
+        public async Task<IActionResult> Exec([FromForm] SyncRequest request)
         {
             if(request == null)
             {
-                this.logger.LogWarning("Sync(), Request = NULL");
+                this.logger.LogWarning("Sync(), Request = NULL");   
                 return BadRequest(ValidationStatus.InvalidParams);
             }
 
@@ -90,7 +91,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             }
 
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
-            String downloadFileUrlFormat = String.Format("{0}v1/sync/documents/{{0}}", this.ploudSettings.Url);
+            String downloadFileUrlFormat = String.Format("{0}sync/documents/{{0}}", this.ploudSettings.Url);
             SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath, downloadFileUrlFormat);
             SyncResponse syncResponse = await request.SynchronizeAsync(this.syncService, syncSettings);
             if(syncResponse == null)
@@ -116,7 +117,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
         
         [Route("Initialize")]
         [HttpPost]
-        public async Task<IActionResult> Initialize(InitializeRequest request)
+        public async Task<IActionResult> Initialize([FromForm]InitializeRequest request)
         {
             if ((request == null)
                 || (request.File == null))
@@ -141,7 +142,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 if ((signatureResponse == null)
                     || (!signatureResponse.IsValid))
                 {
-                    this.logger.LogWarning("Initialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
+                    this.logger.LogWarning("Initialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature); 
                     return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
@@ -161,7 +162,6 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 this.logger.LogError("Initialize.GetPloudFilePath(PloudAlreadyInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
                 return BadRequest(ValidationStatus.PloudAlreadyInitialized);
             }
-
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
             SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath);
             bool success = await request.InitializeAsync(this.syncService, syncSettings);
@@ -366,7 +366,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
 
             if (this.ploudSettings.VerifySignature)
             {
-                SignatureRequest signatureRequest = request.ToSignatureRequest(this.ploudSettings.PublicKey, SignatureRequest.Methods.Initialize);
+                SignatureRequest signatureRequest = request.ToSignatureRequest(this.ploudSettings.PublicKey, SignatureRequest.Methods.Download);
                 SignatureResponse signatureResponse = await signatureRequest.VerifySignatureAsync(this.signatureService);
                 if ((signatureResponse == null)
                     || (!signatureResponse.IsValid))
@@ -399,7 +399,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             {
                 return InternalServerError(ValidationStatus.ServerError);
             }
-            using (Stream fileStream = new FileStream(cellarFilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.DeleteOnClose))
+            Stream fileStream = new FileStream(cellarFilePath, FileMode.Open, FileAccess.Read, FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.DeleteOnClose);
             {
                 return File(fileStream, "application/octet-stream", "PLOC.co");
             }

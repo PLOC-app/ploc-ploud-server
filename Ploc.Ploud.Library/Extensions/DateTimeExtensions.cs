@@ -14,7 +14,7 @@ namespace Ploc.Ploud.Library
             return origin.AddSeconds(timestamp);
         }
 
-        public static long LongValue(this DateTime date)
+        public static long GetSecondsSince1970(this DateTime date)
         {
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             TimeSpan diff = date.ToUniversalTime() - origin;

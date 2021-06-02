@@ -14,6 +14,8 @@ namespace Ploc.Ploud.Api
 
             public const String Uninitialize = "uninitialize";
 
+            public const String Download = "download";
+
             public const String Status = "status";
 
             public const String Sync = "sync";
