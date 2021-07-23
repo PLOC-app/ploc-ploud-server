@@ -12,7 +12,7 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("wi")]
         [DataStore("wine")]
-        public String Wine;
+        public String Wine { get; set; }
 
         public Wine GetWine()
         {

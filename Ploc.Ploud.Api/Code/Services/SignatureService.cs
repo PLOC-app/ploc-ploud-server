@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Net.Http;
 using System.Text;
@@ -27,6 +28,7 @@ namespace Ploc.Ploud.Api
                         {
                             if (!response.IsSuccessStatusCode)
                             {
+                                Trace.TraceError(json);
                                 return signatureResponse;
                             }
                             signatureResponse.IsValid = true;

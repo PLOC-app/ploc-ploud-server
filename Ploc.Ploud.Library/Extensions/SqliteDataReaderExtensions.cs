@@ -65,7 +65,7 @@ namespace Ploc.Ploud.Library
                 }
                 else if (propertyInfo.PropertyType == typeof(Int32))
                 {
-                    Int32 intValue = Convert.ToInt16(rawValue);
+                    Int32 intValue = Convert.ToInt32(rawValue);
                     propertyInfo.SetValue(obj, intValue);
                 }
                 else if (propertyInfo.PropertyType == typeof(Int64))

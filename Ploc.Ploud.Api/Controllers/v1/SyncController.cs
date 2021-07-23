@@ -22,9 +22,9 @@ namespace Ploc.Ploud.Api.Controllers.v1
         private readonly ILogger logger;
         private readonly PloudSettings ploudSettings;
 
-        public SyncController(IMemoryCache memoryCache, 
-            IAuthenticationService authenticationService, 
-            ISignatureService signatureService, 
+        public SyncController(IMemoryCache memoryCache,
+            IAuthenticationService authenticationService,
+            ISignatureService signatureService,
             ISyncService syncService,
             INotificationService notificationService,
             ILogger<SyncController> logger,
@@ -43,9 +43,9 @@ namespace Ploc.Ploud.Api.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> Exec([FromForm] SyncRequest request)
         {
-            if(request == null)
+            if (request == null)
             {
-                this.logger.LogWarning("Sync(), Request = NULL");   
+                this.logger.LogWarning("Sync(), Request = NULL");
                 return BadRequest(ValidationStatus.InvalidParams);
             }
 
@@ -75,7 +75,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
 
             AuthenticationRequest authenticationRequest = request.ToAuthenticationRequest(this.ploudSettings.PublicKey);
             AuthenticationResponse authenticationResponse = await authenticationRequest.AuthenticateAsync(this.authenticationService, this.memoryCache);
-            if((authenticationResponse == null)
+            if ((authenticationResponse == null)
                 || (!authenticationResponse.IsAuthenticated))
             {
                 this.logger.LogWarning("Sync.Authenticate(), Token = {Token}", authenticationRequest.Token);
@@ -83,7 +83,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             }
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
-            if((String.IsNullOrEmpty(ploudFilePath))
+            if ((String.IsNullOrEmpty(ploudFilePath))
                 || (!System.IO.File.Exists(ploudFilePath)))
             {
                 this.logger.LogWarning("Sync.GetPloudFilePath(), PloudFilePath = {PloudFilePath}", ploudFilePath);
@@ -91,16 +91,16 @@ namespace Ploc.Ploud.Api.Controllers.v1
             }
 
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
-            String downloadFileUrlFormat = String.Format("{0}sync/documents/{{0}}", this.ploudSettings.Url);
+            String downloadFileUrlFormat = String.Format("{0}v1/sync/documents/{{0}}", this.ploudSettings.Url);
             SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath, downloadFileUrlFormat);
             SyncResponse syncResponse = await request.SynchronizeAsync(this.syncService, syncSettings);
-            if(syncResponse == null)
+            if (syncResponse == null)
             {
-                this.logger.LogError("Sync.Synchronize(), PloudFilePath = {PloudFilePath}", ploudFilePath);
+                this.logger.LogError("Sync.Synchronize(), SyncResponse = NULL, PloudFilePath = {PloudFilePath}", ploudFilePath);
                 return InternalServerError(ValidationStatus.PloudNotInitialized);
             }
 
-            if((request.Objects != null) 
+            if ((request.Objects != null)
                 && (request.Objects.Count > 0))
             {
                 NotificationRequest notificationRequest = request.ToNotificationRequest(this.ploudSettings.PublicKey);
@@ -114,11 +114,17 @@ namespace Ploc.Ploud.Api.Controllers.v1
             });
         }
 
-        
+
         [Route("Initialize")]
         [HttpPost]
-        public async Task<IActionResult> Initialize([FromForm]InitializeRequest request)
+        public async Task<IActionResult> Initialize([FromForm] InitializeRequest request)
         {
+            if ((request == null)
+                || (request.File == null))
+
+            {
+                request = InitializeRequest.FromHeaders(this.Request);
+            }
             if ((request == null)
                 || (request.File == null))
             {
@@ -142,7 +148,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 if ((signatureResponse == null)
                     || (!signatureResponse.IsValid))
                 {
-                    this.logger.LogWarning("Initialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature); 
+                    this.logger.LogWarning("Initialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
                     return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
@@ -203,6 +209,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
                     || (!signatureResponse.IsValid))
                 {
                     this.logger.LogWarning("Unitialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
+                    this.logger.LogWarning("Unitialize.VerifySignature(), Request = {Request}", JsonSerializer.Serialize(signatureRequest));
                     return Forbid(ValidationStatus.InvalidSignature);
                 }
             }
@@ -236,7 +243,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             });
         }
 
-        [Route("documents/{0}/")]
+        [Route("documents/{document}/")]
         [HttpPost]
         public async Task<IActionResult> GetDocument(DocumentRequest request)
         {
@@ -337,7 +344,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
 
             String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
-            SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath); 
+            SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath);
             return Ok(new
             {
                 Status = Config.Success,

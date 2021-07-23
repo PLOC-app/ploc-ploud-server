@@ -122,6 +122,8 @@ namespace Ploc.Ploud.Library
             syncObjects.Racks = await this.Repository.GetAllAsync<Rack>(ploudObjectsQuery);
             syncObjects.RackItems = await this.Repository.GetAllAsync<RackItem>(ploudObjectsQuery);
             syncObjects.Documents = await this.Repository.GetAllAsync<Document>(ploudObjectsQuery);
+            syncObjects.BottleFormats = this.Repository.GetAll<BottleFormat>(ploudObjectsQuery);
+            syncObjects.Orders = await this.Repository.GetAllAsync<Order>(ploudObjectsQuery);
             syncObjects.DeletedObjects = await this.Repository.GetAllAsync<DeletedObject>(deletedObjectsQuery);
             syncObjects.RemoveEmptyCollection();
             return syncObjects;
@@ -154,6 +156,8 @@ namespace Ploc.Ploud.Library
             syncObjects.Racks = this.Repository.GetAll<Rack>(ploudObjectsQuery);
             syncObjects.RackItems = this.Repository.GetAll<RackItem>(ploudObjectsQuery);
             syncObjects.Documents = this.Repository.GetAll<Document>(ploudObjectsQuery);
+            syncObjects.BottleFormats = this.Repository.GetAll<BottleFormat>(ploudObjectsQuery);
+            syncObjects.Orders = this.Repository.GetAll<Order>(ploudObjectsQuery);
             syncObjects.DeletedObjects = this.Repository.GetAll<DeletedObject>(deletedObjectsQuery);
             syncObjects.RemoveEmptyCollection();
             return syncObjects;

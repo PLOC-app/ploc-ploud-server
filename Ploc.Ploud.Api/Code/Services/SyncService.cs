@@ -52,11 +52,12 @@ namespace Ploc.Ploud.Api
             }
 
             // .Delete objects
-            if ((syncObjects.DeletedObjects != null)
-                && (syncObjects.DeletedObjects.Count > 0))
+            PloudObjectCollection<DeletedObject> deletedObjects = syncObjects.AllDeletedObjects(cellar);
+            if ((deletedObjects != null)
+                && (deletedObjects.Count > 0))
             {
                 PloudObjectCollection<IPloudObject> ploudObjectsToDelete = new PloudObjectCollection<IPloudObject>();
-                foreach (DeletedObject deletedObject in syncObjects.DeletedObjects)
+                foreach (DeletedObject deletedObject in deletedObjects)
                 {
                     IPloudObject ploudObjectToDelete = deletedObject.PloudObject;
                     if (ploudObjectToDelete == null)
@@ -131,15 +132,28 @@ namespace Ploc.Ploud.Api
             }
 
             // Delete all files
-            this.Delete(syncSettings.PloudDirectory);
+            // this.Delete(syncSettings.PloudDirectory);
             this.Delete(syncSettings.PloudFilePath);
 
             // Save file
-            using (Stream fileStream = new FileStream(syncSettings.PloudFilePath, FileMode.Create))
+            bool success = false;
+            using (Stream outputStream = new FileStream(syncSettings.PloudFilePath, FileMode.Create))
             {
-                await request.File.CopyToAsync(fileStream);
+                try
+                {
+                    await request.File.CopyToAsync(outputStream);
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
             }
-
+            if(!success)
+            {
+                File.Delete(syncSettings.PloudFilePath);
+                return false;
+            }
             ICellar cellar = new Cellar(syncSettings.PloudFilePath);
             return cellar.IsValid();
         }
@@ -169,6 +183,7 @@ namespace Ploc.Ploud.Api
                 {
                     File.Delete(filePath);
                 }
+                Directory.Delete(fileOrDirectory);
             }
             else
             {

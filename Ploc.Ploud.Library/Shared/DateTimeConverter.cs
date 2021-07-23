@@ -12,7 +12,8 @@ namespace Ploc.Ploud.Library
     {
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return reader.GetInt64().DateTimeValue();
+            double doubleValue = reader.GetDouble();
+            return ((long)doubleValue).DateTimeValue();
         }
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)

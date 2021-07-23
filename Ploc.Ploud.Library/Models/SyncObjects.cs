@@ -40,7 +40,22 @@ namespace Ploc.Ploud.Library
 
         public PloudObjectCollection<GlobalParameter> GlobalParameters { get; set; }
 
+        public PloudObjectCollection<BottleFormat> BottleFormats { get; set; }
+
         public PloudObjectCollection<DeletedObject> DeletedObjects { get; set; }
+
+        public PloudObjectCollection<DeletedObject> AllDeletedObjects(ICellar cellar)
+        {
+            if(this.DeletedObjects != null)
+            {
+                foreach (DeletedObject deletedObject in this.DeletedObjects)
+                {
+                    deletedObject.Cellar = cellar;
+                    deletedObject.TimeLastModified = DateTime.UtcNow;
+                }
+            }
+            return this.DeletedObjects;
+        }
 
         public PloudObjectCollection<IPloudObject> AllObjects(ICellar cellar)
         {
@@ -69,6 +84,11 @@ namespace Ploc.Ploud.Library
                 && (this.Classifications.Count > 0))
             {
                 allObjects.AddRange(this.Classifications);
+            }
+            if ((this.BottleFormats != null)
+                && (this.BottleFormats.Count > 0))
+            {
+                allObjects.AddRange(this.BottleFormats);
             }
             if ((this.Grapes != null)
                 && (this.Grapes.Count > 0))
@@ -191,6 +211,18 @@ namespace Ploc.Ploud.Library
             {
                 this.GlobalParameters = null;
             }
+            if (this.BottleFormats.Count == 0)
+            {
+                this.BottleFormats = null;
+            }
+            if (this.Orders.Count == 0)
+            {
+                this.Orders = null;
+            }
+            if (this.DeletedObjects.Count == 0)
+            {
+                this.DeletedObjects = null;
+            }
         }
 
         [JsonIgnore]
@@ -211,7 +243,10 @@ namespace Ploc.Ploud.Library
                     + GetCount(this.Documents)
                     + GetCount(this.Racks)
                     + GetCount(this.RackItems)
-                    + GetCount(this.Colors);
+                    + GetCount(this.Orders)
+                    + GetCount(this.Colors)
+                    + GetCount(this.BottleFormats)
+                    + GetCount(this.DeletedObjects);
             }
         }
 

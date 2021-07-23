@@ -18,7 +18,7 @@ namespace Ploc.Ploud.Api
                 if(authenticationResponse.IsAuthenticated)
                 {
                     MemoryCacheEntryOptions cacheExpiryOptions = CreateMemoryCacheEntryOptions();
-                    memoryCache.Set<AuthenticationResponse>(request.PublicKey, authenticationResponse, cacheExpiryOptions);
+                    memoryCache.Set<AuthenticationResponse>(request.Token, authenticationResponse, cacheExpiryOptions);
                 }
             }
             return authenticationResponse;

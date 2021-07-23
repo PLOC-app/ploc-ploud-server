@@ -37,6 +37,10 @@ namespace Ploc.Ploud.Library
         [DataStore("city", true)]
         public String City { get; set; }
 
+        [JsonPropertyName("co")]
+        [DataStore("country", true)]
+        public String Country { get; set; }
+
         [JsonPropertyName("a1")]
         [DataStore("address1")]
         public String Address1 { get; set; }
@@ -55,10 +59,10 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("lt")]
         [DataStore("latitude")]
-        public String Latitude { get; set; }
+        public double Latitude { get; set; }
 
         [JsonPropertyName("lg")]
         [DataStore("longitude")]
-        public String Longitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace Ploc.Ploud.Library
     [DataStore("io")]
     public class Order : PloudObject
     {
-        [JsonPropertyName("vn")]
+        [JsonPropertyName("ve")]
         [DataStore("vendor")]
         public String Vendor { get; set; }
 
