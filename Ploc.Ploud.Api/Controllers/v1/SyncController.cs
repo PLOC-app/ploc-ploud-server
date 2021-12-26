@@ -90,8 +90,9 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return NotFound(ValidationStatus.PloudNotInitialized);
             }
 
+            String apiUrl = String.Concat(this.Request.Scheme, "://", this.Request.Host, "/");
             String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
-            String downloadFileUrlFormat = String.Format("{0}v1/sync/documents/{{0}}", this.ploudSettings.Url);
+            String downloadFileUrlFormat = String.Format("{0}v1/sync/documents/{{0}}", apiUrl);
             SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath, downloadFileUrlFormat);
             SyncResponse syncResponse = await request.SynchronizeAsync(this.syncService, syncSettings);
             if (syncResponse == null)
@@ -353,8 +354,8 @@ namespace Ploc.Ploud.Api.Controllers.v1
         }
 
         [Route("Download")]
-        [HttpPost]
-        public async Task<IActionResult> Download(DownloadRequest request)
+        [HttpGet]
+        public async Task<IActionResult> Download([FromQuery] DownloadRequest request)
         {
             if (request == null)
             {

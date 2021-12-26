@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Ploc.Ploud.Library;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,7 +24,8 @@ namespace Ploc.Ploud.Api.Controllers
             {
                 Status = Config.Success,
                 Uptime = uptimeSpan,
-                Server = Environment.MachineName,
+                Host = Environment.MachineName,
+                Url = String.Concat(this.Request.Scheme, "://", this.Request.Host, "/"),
                 Now = DateTime.Now,
                 UtcNow = DateTime.UtcNow
             };

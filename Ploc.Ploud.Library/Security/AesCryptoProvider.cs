@@ -130,17 +130,19 @@ namespace Ploc.Ploud.Library
             bool success = false;
             try
             {
+                this.Dispose();
+                this.rsaCryptoServiceProvider = CreateProvider(true);
                 this.rsaCryptoServiceProvider.FromXmlString(data);
                 success = true;
             }
             catch
             {
-
+               
             }
             return success;
         }
 
-        private RSACryptoServiceProvider CreateProvider()
+        private RSACryptoServiceProvider CreateProvider(bool excludeFlags)
         {
             if (OperatingSystem.IsWindows())
             {
@@ -148,10 +150,19 @@ namespace Ploc.Ploud.Library
                 {
                     KeyContainerName = KeyContainerName
                 };
-                cspParameters.Flags |= CspProviderFlags.UseMachineKeyStore | CspProviderFlags.UseArchivableKey | CspProviderFlags.NoPrompt;
+                cspParameters.Flags |= CspProviderFlags.UseMachineKeyStore;
+                if (!excludeFlags) 
+                {
+                    cspParameters.Flags |= CspProviderFlags.UseArchivableKey | CspProviderFlags.NoPrompt;
+                }
                 return new RSACryptoServiceProvider(KeySize, cspParameters);
             }
             throw new NotSupportedException();
+        }
+
+        private RSACryptoServiceProvider CreateProvider()
+        {
+            return CreateProvider(false);
         }
 
         public void Dispose()
