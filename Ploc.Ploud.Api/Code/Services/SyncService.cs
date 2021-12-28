@@ -155,7 +155,12 @@ namespace Ploc.Ploud.Api
                 return false;
             }
             ICellar cellar = new Cellar(syncSettings.PloudFilePath);
-            return cellar.IsValid();
+            success = cellar.IsValid();
+            if (!success)
+            {
+                File.Delete(syncSettings.PloudFilePath);
+            }
+            return success;
         }
 
         public async Task<bool> UninitializeAsync(UninitializeRequest request, SyncSettings syncSettings)

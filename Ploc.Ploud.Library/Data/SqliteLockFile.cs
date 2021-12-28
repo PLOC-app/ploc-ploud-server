@@ -15,7 +15,7 @@ namespace Ploc.Ploud.Library
 
         public String LockFilePath { get; private set; }
 
-        public void Lock()
+        public bool Lock()
         {
             int retryCount = 0;
             while(true)
@@ -27,17 +27,35 @@ namespace Ploc.Ploud.Library
                 Thread.Sleep(Config.Data.RetryDelay);
                 if (++retryCount > Config.Data.MaxRetries)
                 {
-                    break;
+                    return false;
                 }
             }
             File.WriteAllText(this.LockFilePath, "*");
+            return true;
         }
 
         public void Unlock()
         {
-            if (File.Exists(this.LockFilePath))
+            int retryCount = 0;
+            while (true)
             {
-                File.Delete(this.LockFilePath);
+                if (!File.Exists(this.LockFilePath))
+                {
+                    break;
+                }
+                try
+                {
+                    File.Delete(this.LockFilePath);
+                    break;
+                } 
+                catch
+                {
+                    Thread.Sleep(Config.Data.RetryDelay);
+                    if (++retryCount > Config.Data.MaxRetries)
+                    {
+                        return;
+                    }
+                }
             }
         }
     }

@@ -15,6 +15,11 @@ namespace Ploc.Ploud.Api
 
         public const String CurrentVersion = "v1";
 
+        public static class Folders
+        {
+            public const String Data = "data";
+        }
+
         public static class Actions
         {
             public const String Grant = "Grant";

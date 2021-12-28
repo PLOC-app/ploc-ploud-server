@@ -138,7 +138,11 @@ namespace Ploc.Ploud.Library
 
         private SQLiteConnection GetWriteableConnection()
         {
-            this.LockFile.Lock();
+            bool isLocked = this.LockFile.Lock();
+            if(!isLocked)
+            {
+                return null;
+            }
             SQLiteConnection sqliteConnection = GetReadableConnection();
             if (sqliteConnection == null)
             {
@@ -149,7 +153,11 @@ namespace Ploc.Ploud.Library
 
         private async Task<SQLiteConnection> GetWriteableConnectionAsync()
         {
-            this.LockFile.Lock();
+            bool isLocked = this.LockFile.Lock();
+            if (!isLocked)
+            {
+                return null;
+            }
             SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
             if (sqliteConnection == null)
             {

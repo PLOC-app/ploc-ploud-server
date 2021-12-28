@@ -7,6 +7,7 @@ using Ploc.Ploud.Library;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Ploc.Ploud.Api.Controllers.v1
 {
@@ -27,6 +28,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             ISignatureService signatureService,
             ISyncService syncService,
             INotificationService notificationService,
+            IWebHostEnvironment webHostEnvironment,
             ILogger<SyncController> logger,
             IOptions<PloudSettings> options)
         {
@@ -37,6 +39,7 @@ namespace Ploc.Ploud.Api.Controllers.v1
             this.syncService = syncService;
             this.logger = logger;
             this.ploudSettings = options.Value;
+            this.ploudSettings.Directory = Path.Combine(webHostEnvironment.ContentRootPath, Config.Folders.Data);
         }
 
         [Route("Exec")]
