@@ -14,6 +14,8 @@ namespace Ploc.Ploud.Library
 
         Decrypt,
 
-        Validate
+        Validate,
+
+        ClearTimestamp // Fix Android timestamp 🙄
     }
 }

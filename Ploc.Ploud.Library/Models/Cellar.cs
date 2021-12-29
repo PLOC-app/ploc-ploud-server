@@ -98,7 +98,7 @@ namespace Ploc.Ploud.Library
         public async Task<SyncObjects> GetSyncObjectsAsync(SyncObjectsOptions options)
         {
             IQuery ploudObjectsQuery = new Query.Builder()
-                .AddFilter("tm", ExpressionType.GreaterThanOrEqual, options.Timestamp)
+                .AddFilter("tp", ExpressionType.GreaterThanOrEqual, options.Timestamp)
                 .AddFilter("sid", ExpressionType.NotEqual, options.CallerId)
                 .Build();
 
@@ -132,7 +132,7 @@ namespace Ploc.Ploud.Library
         public SyncObjects GetSyncObjects(SyncObjectsOptions options)
         {
             IQuery ploudObjectsQuery = new Query.Builder()
-                .AddFilter("tm",ExpressionType.GreaterThanOrEqual, options.Timestamp)
+                .AddFilter("tp",ExpressionType.GreaterThanOrEqual, options.Timestamp)
                 .AddFilter("sid", ExpressionType.NotEqual, options.CallerId)
                 .Build();
 

@@ -638,6 +638,10 @@ namespace Ploc.Ploud.Library
             {
                 status = this.Validate();
             }
+            else if (cellarOperation == CellarOperation.ClearTimestamp)
+            {
+                status = this.ClearTimestamp();
+            }
             else
             {
                 throw new NotSupportedException();
@@ -663,6 +667,10 @@ namespace Ploc.Ploud.Library
             else if (cellarOperation == CellarOperation.Validate)
             {
                 status = await this.ValidateAsync();
+            }
+            else if (cellarOperation == CellarOperation.ClearTimestamp)
+            {
+                status = await this.ClearTimestampAsync();
             }
             else
             {
@@ -743,6 +751,50 @@ namespace Ploc.Ploud.Library
             }
             await this.CloseReadableConnectionAsync(sqliteConnection);
             return count == 3;
+        }
+
+        private bool ClearTimestamp()
+        {
+            SQLiteConnection sqliteConnection = GetWriteableConnection();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            long millisecondsSince1970 = DateTime.UtcNow.AddDays(-1).GetMillisecondsSince1970();
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                foreach(String tableName in Config.Data.TableNames)
+                {
+                    command.CommandType = CommandType.Text;
+                    command.CommandTimeout = CommandTimeout;
+                    command.CommandText = String.Format("update \"{0}\" set tp = {1}", tableName, millisecondsSince1970);
+                    command.ExecuteNonQueryWithRetry();
+                }
+            }
+            this.CloseWriteableConnection(sqliteConnection);
+            return true;
+        }
+
+        private async Task<bool> ClearTimestampAsync()
+        {
+            SQLiteConnection sqliteConnection = await GetWriteableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return false;
+            }
+            long millisecondsSince1970 = DateTime.UtcNow.AddDays(-1).GetMillisecondsSince1970();
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                foreach (String tableName in Config.Data.TableNames)
+                {
+                    command.CommandType = CommandType.Text;
+                    command.CommandTimeout = CommandTimeout;
+                    command.CommandText = String.Format("update \"{0}\" set tp = {1}", tableName, millisecondsSince1970);
+                    await command.ExecuteNonQueryWithRetryAsync();
+                }
+            }
+            await this.CloseWriteableConnectionAsync(sqliteConnection);
+            return true;
         }
 
         private bool Encrypt()

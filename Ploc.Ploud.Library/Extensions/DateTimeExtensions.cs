@@ -20,5 +20,12 @@ namespace Ploc.Ploud.Library
             TimeSpan diff = date.ToUniversalTime() - origin;
             return Convert.ToInt64(Math.Floor(diff.TotalSeconds));
         }
+
+        public static long GetMillisecondsSince1970(this DateTime date)
+        {
+            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            TimeSpan diff = date.ToUniversalTime() - origin;
+            return Convert.ToInt64(Math.Floor(diff.TotalMilliseconds));
+        }
     }
 }

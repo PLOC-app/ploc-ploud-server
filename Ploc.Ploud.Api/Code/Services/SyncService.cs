@@ -156,7 +156,11 @@ namespace Ploc.Ploud.Api
             }
             ICellar cellar = new Cellar(syncSettings.PloudFilePath);
             success = cellar.IsValid();
-            if (!success)
+            if (success)
+            {
+                success = await cellar.ExecuteAsync(CellarOperation.ClearTimestamp);
+            }
+            if(!success)
             {
                 File.Delete(syncSettings.PloudFilePath);
             }

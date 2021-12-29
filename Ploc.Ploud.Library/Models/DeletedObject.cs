@@ -96,7 +96,7 @@ namespace Ploc.Ploud.Library
             }
             set
             {
-                this.Timestamp = value.GetSecondsSince1970();
+                this.Timestamp = value.GetMillisecondsSince1970();
             }
         }
     }

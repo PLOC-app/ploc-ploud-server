@@ -145,10 +145,12 @@ namespace Ploc.Ploud.Library
             {
                 allObjects.AddRange(this.DeletedObjects);
             }
-            foreach(IPloudObject ploudObject in allObjects)
+            DateTime utcNow = DateTime.UtcNow;
+            foreach (IPloudObject ploudObject in allObjects)
             {
                 ploudObject.Cellar = cellar;
-                ploudObject.TimeLastModified = DateTime.UtcNow;
+                ploudObject.TimeLastModified = utcNow;
+                ploudObject.Timestamp = utcNow.GetMillisecondsSince1970();
             }
             return allObjects;
         }
