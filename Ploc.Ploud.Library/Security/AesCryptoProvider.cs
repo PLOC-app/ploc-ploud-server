@@ -12,18 +12,18 @@ namespace Ploc.Ploud.Library
         private byte[] aesKey;
         private byte[] aesIv;
 
-        private RSACryptoServiceProvider rsaCryptoServiceProvider;
+        private ICryptoServiceProvider cryptoServiceProvider;
 
         public AesCryptoProvider(String encryptedKey, String encryptedIv)
         {
-            this.rsaCryptoServiceProvider = CreateProvider();
+            this.cryptoServiceProvider = CreateProvider();
             this.aesKey = this.DecryptRsa(encryptedKey);
             this.aesIv = this.DecryptRsa(encryptedIv);
         }
 
         public AesCryptoProvider()
         {
-            this.rsaCryptoServiceProvider = CreateProvider();
+            this.cryptoServiceProvider = CreateProvider();
             this.InitializeAes();
         }
 
@@ -47,15 +47,12 @@ namespace Ploc.Ploud.Library
 
         private byte[] DecryptRsa(String value)
         {
-            byte[] data = Convert.FromBase64String(value);
-            return rsaCryptoServiceProvider.Decrypt(data, false);
+            return this.cryptoServiceProvider.Decrypt(value);
         }
 
         private String EncryptRsa(byte[] data)
         {
-            byte[] cypherText = rsaCryptoServiceProvider.Encrypt(data, false);
-            String encryptedValue = Convert.ToBase64String(cypherText);
-            return encryptedValue;
+            return this.cryptoServiceProvider.Encrypt(data);
         }
 
         public String Decrypt(String value)
@@ -118,7 +115,7 @@ namespace Ploc.Ploud.Library
 
         public String ExportRsaKey()
         {
-            return rsaCryptoServiceProvider.ToXmlString(true);
+            return this.cryptoServiceProvider.Export();
         }
 
         public bool ImportRsaKey(String data)
@@ -131,8 +128,8 @@ namespace Ploc.Ploud.Library
             try
             {
                 this.Dispose();
-                this.rsaCryptoServiceProvider = CreateProvider(true);
-                this.rsaCryptoServiceProvider.FromXmlString(data);
+                this.cryptoServiceProvider = CreateProvider(true);
+                this.cryptoServiceProvider.Import(data);
                 success = true;
             }
             catch
@@ -142,7 +139,7 @@ namespace Ploc.Ploud.Library
             return success;
         }
 
-        private RSACryptoServiceProvider CreateProvider(bool excludeFlags)
+        private ICryptoServiceProvider CreateProvider(bool excludeFlags)
         {
             if (OperatingSystem.IsWindows())
             {
@@ -155,22 +152,22 @@ namespace Ploc.Ploud.Library
                 {
                     cspParameters.Flags |= CspProviderFlags.UseArchivableKey | CspProviderFlags.NoPrompt;
                 }
-                return new RSACryptoServiceProvider(KeySize, cspParameters);
+                return new WindowsCryptoServiceProvider(KeySize, cspParameters);
             }
-            throw new NotSupportedException();
+            return new LinuxCryptoServiceProvider(KeySize);
         }
 
-        private RSACryptoServiceProvider CreateProvider()
-        {
+        private ICryptoServiceProvider CreateProvider()
+        { 
             return CreateProvider(false);
         }
 
         public void Dispose()
         {
-            if (this.rsaCryptoServiceProvider != null)
+            if (this.cryptoServiceProvider != null)
             {
-                this.rsaCryptoServiceProvider.Dispose();
-                this.rsaCryptoServiceProvider = null;
+                this.cryptoServiceProvider.Dispose();
+                this.cryptoServiceProvider = null;
             }
         }
     }

@@ -20,17 +20,23 @@ namespace Ploc.Ploud.Library
             int retryCount = 0;
             while(true)
             {
-                if(!File.Exists(this.LockFilePath))
+                try
+                {
+                    File.WriteAllText(this.LockFilePath, "*");
+                }
+                catch
+                {
+                    Thread.Sleep(Config.Data.RetryDelay);
+                    if (++retryCount > Config.Data.MaxRetries)
+                    {
+                        return false;
+                    }
+                }
+                if(File.Exists(this.LockFilePath))
                 {
                     break;
                 }
-                Thread.Sleep(Config.Data.RetryDelay);
-                if (++retryCount > Config.Data.MaxRetries)
-                {
-                    return false;
-                }
             }
-            File.WriteAllText(this.LockFilePath, "*");
             return true;
         }
 

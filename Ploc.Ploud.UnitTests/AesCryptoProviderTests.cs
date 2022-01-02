@@ -50,5 +50,32 @@ namespace Ploc.Ploud.UnitTests
             Console.WriteLine(descryptedText);
             Assert.AreEqual(textToEncrypt, descryptedText);
         }
+
+        [TestMethod]
+        public void TestExportRsaKey()
+        {
+            AesCryptoProvider aesCryptoProvider = new AesCryptoProvider();
+            String rsaKey = aesCryptoProvider.ExportRsaKey();
+            Console.WriteLine(rsaKey);
+
+            AesCryptoProvider copyOfAesCryptoProvider = new AesCryptoProvider();
+            String copyOfRsaKey2 = copyOfAesCryptoProvider.ExportRsaKey();
+
+            Assert.AreEqual(rsaKey, copyOfRsaKey2);
+        }
+
+        [TestMethod]
+        public void TestExportImportRsaKey()
+        {
+            AesCryptoProvider aesCryptoProvider = new AesCryptoProvider();
+            String rsaKey = aesCryptoProvider.ExportRsaKey();
+            Console.WriteLine(rsaKey);
+
+            AesCryptoProvider copyOfAesCryptoProvider = new AesCryptoProvider();
+            copyOfAesCryptoProvider.ImportRsaKey(rsaKey);
+            String copyOfRsaKey2 = copyOfAesCryptoProvider.ExportRsaKey();
+
+            Assert.AreEqual(rsaKey, copyOfRsaKey2);
+        }
     }
 }
