@@ -91,6 +91,11 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.GetAllAsync<T>();
         }
 
+        public static Task<Dashboard> GetDashboardAsync(this ICellar cellar)
+        {
+            return cellar.Repository.GetDashboardAsync();
+        }
+
         public static bool Execute(this ICellar cellar, CellarOperation cellarOperation)
         {
             return cellar.Repository.Execute(cellarOperation);

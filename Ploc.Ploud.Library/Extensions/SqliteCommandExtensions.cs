@@ -151,6 +151,22 @@ namespace Ploc.Ploud.Library
             command.CommandText = String.Concat(columnsBuilder, valuesBuilder);
         }
 
+        public static long GetCount<T>(this SQLiteCommand command) where T : IPloudObject
+        {
+            command.Parameters.Clear();
+            String tableName = typeof(T).GetTableName();
+            command.CommandText = String.Format("SELECT COUNT(*) FROM \"{0}\" ", tableName);
+            return command.ExecuteScalarWithRetry();
+        }
+
+        public static async Task<long> GetCountAsync<T>(this SQLiteCommand command) where T : IPloudObject
+        {
+            command.Parameters.Clear();
+            String tableName = typeof(T).GetTableName();
+            command.CommandText = String.Format("SELECT COUNT(*) FROM \"{0}\" ", tableName);
+            return await command.ExecuteScalarWithRetryAsync();
+        }
+
         public static void Encrypt<T>(this SQLiteCommand command) where T : IPloudObject
         {
             command.Parameters.Clear();
