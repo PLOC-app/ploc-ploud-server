@@ -51,5 +51,9 @@ namespace Ploc.Ploud.Library
         bool CopyTo(String targetCellarPath);
 
         Task<bool> CopyToAsync(String targetCellarPath);
+
+        Dashboard GetDashboard();
+
+        Task<Dashboard> GetDashboardAsync();
     }
 }

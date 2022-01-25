@@ -21,6 +21,8 @@ namespace Ploc.Ploud.Api
             public const String Sync = "sync";
 
             public const String GetDocument = "getdocument";
+
+            public const String Dashboard = "dashboard";
         }
 
         public String Method { get; set; }

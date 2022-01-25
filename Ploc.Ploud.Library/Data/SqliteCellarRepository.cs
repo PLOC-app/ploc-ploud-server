@@ -1014,5 +1014,47 @@ namespace Ploc.Ploud.Library
             await this.CloseWriteableConnectionAsync(sqliteConnection);
             return status;
         }
+
+        public Dashboard GetDashboard()
+        {
+            SQLiteConnection sqliteConnection = GetReadableConnection();
+            if (sqliteConnection == null)
+            {
+                return null;
+            }
+            Dashboard dashboard = new Dashboard();
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                dashboard.Wines = command.GetCount<Wine>();
+                dashboard.Cellars = command.GetCount<Rack>();
+                dashboard.TastingNotes = command.GetCount<TastingNotes>();
+            }
+            dashboard.FileSize = new FileInfo(this.SqlitePath).Length;
+            this.CloseReadableConnection(sqliteConnection);
+            return dashboard;
+        }
+
+        public async Task<Dashboard> GetDashboardAsync()
+        {
+            SQLiteConnection sqliteConnection = await GetReadableConnectionAsync();
+            if (sqliteConnection == null)
+            {
+                return null;
+            }
+            Dashboard dashboard = new Dashboard();
+            using (SQLiteCommand command = sqliteConnection.CreateCommand())
+            {
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = CommandTimeout;
+                dashboard.Wines = await command.GetCountAsync<Wine>();
+                dashboard.Cellars = await command.GetCountAsync<Rack>();
+                dashboard.TastingNotes = await command.GetCountAsync<TastingNotes>();
+            }
+            dashboard.FileSize = new FileInfo(this.SqlitePath).Length;
+            await this.CloseReadableConnectionAsync(sqliteConnection);
+            return dashboard;
+        }
     }
 }

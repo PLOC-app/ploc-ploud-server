@@ -59,6 +59,11 @@ namespace Ploc.Ploud.Api
             return await syncService.PrepareForDownloadAsync(request, syncSettings);
         }
 
+        public static async Task<Dashboard> GetDashboardAsync(this RequestBase request, IDashboardService dashboardService, SyncSettings syncSettings)
+        {
+            return await dashboardService.GetDashboardAsync(request, syncSettings);
+        }
+
         private static MemoryCacheEntryOptions CreateMemoryCacheEntryOptions()
         {
             return new MemoryCacheEntryOptions
