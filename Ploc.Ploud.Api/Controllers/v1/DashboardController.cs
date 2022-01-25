@@ -57,7 +57,7 @@ namespace Ploc.Ploud.Api.Controllers
 
             if (this.ploudSettings.VerifySignature)
             {
-                SignatureRequest signatureRequest = request.ToSignatureRequest(this.ploudSettings.PublicKey, SignatureRequest.Methods.Dashboard);
+                SignatureRequest signatureRequest = request.ToSignatureRequest(this.ploudSettings.PublicKey, SignatureRequest.Methods.GetDashboard);
                 SignatureResponse signatureResponse = await signatureRequest.VerifySignatureAsync(this.signatureService);
                 if ((signatureResponse == null)
                     || (!signatureResponse.IsValid))

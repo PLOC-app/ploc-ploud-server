@@ -22,7 +22,7 @@ namespace Ploc.Ploud.Api
 
             public const String GetDocument = "getdocument";
 
-            public const String Dashboard = "dashboard";
+            public const String GetDashboard = "getdashboard";
         }
 
         public String Method { get; set; }
