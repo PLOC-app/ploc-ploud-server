@@ -54,6 +54,11 @@ namespace Ploc.Ploud.Api
             return await syncService.UninitializeAsync(request, syncSettings);
         }
 
+        public static async Task<bool> EraseDataAsync(this EraseDataRequest request, ISyncService syncService, SyncSettings syncSettings)
+        {
+            return await syncService.EraseDataAsync(request, syncSettings);
+        }
+
         public static async Task<String> PrepareForDownloadAsync(this DownloadRequest request, ISyncService syncService, SyncSettings syncSettings)
         {
             return await syncService.PrepareForDownloadAsync(request, syncSettings);

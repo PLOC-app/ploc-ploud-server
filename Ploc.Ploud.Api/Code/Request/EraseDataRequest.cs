@@ -1,6 +1,6 @@
 ﻿namespace Ploc.Ploud.Api
 {
-    public class UninitializeRequest : RequestBase
+    public class EraseDataRequest : RequestBase
     {
         
     }

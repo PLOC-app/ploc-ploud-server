@@ -31,7 +31,7 @@ namespace Ploc.Ploud.Api
                                 Trace.TraceError(json);
                                 return signatureResponse;
                             }
-                            signatureResponse.IsValid = true;
+                            signatureResponse.IsValid = true; // TODO
                         }
                     }
                 }

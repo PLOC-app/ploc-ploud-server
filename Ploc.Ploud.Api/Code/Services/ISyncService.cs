@@ -17,5 +17,7 @@ namespace Ploc.Ploud.Api
         Task<bool> InitializeAsync(InitializeRequest request, SyncSettings syncSettings);
 
         Task<bool> UninitializeAsync(UninitializeRequest request, SyncSettings syncSettings);
+
+        Task<bool> EraseDataAsync(EraseDataRequest request, SyncSettings syncSettings);
     }
 }

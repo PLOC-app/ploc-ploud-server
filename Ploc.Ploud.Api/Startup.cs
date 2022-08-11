@@ -28,6 +28,7 @@ namespace Ploc.Ploud.Api
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
             services.AddSingleton<ISignatureService, SignatureService>();
             services.AddSingleton<INotificationService, NotificationService>();
+            services.AddSingleton<IDashboardService, DashboardService>();
             services.AddSingleton<ISyncService, SyncService>();
             services.Configure<PloudSettings>(Configuration.GetSection("Ploud"));
             services.AddSingleton<PloudSettings>(serviceProvider => serviceProvider.GetService<IOptions<PloudSettings>>().Value);

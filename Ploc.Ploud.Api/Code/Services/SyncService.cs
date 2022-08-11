@@ -169,6 +169,11 @@ namespace Ploc.Ploud.Api
 
         public async Task<bool> UninitializeAsync(UninitializeRequest request, SyncSettings syncSettings)
         {
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> EraseDataAsync(EraseDataRequest request, SyncSettings syncSettings)
+        {
             // Delete all files
             await Task.Run(() =>
             {
