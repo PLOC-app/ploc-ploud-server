@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -173,7 +171,7 @@ namespace Ploc.Ploud.Library
             String tableName = typeof(T).GetTableName();
             StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.AppendFormat("UPDATE \"{0}\" SET ", tableName);
-             PropertyInfo[] properties = typeof(T).GetProperties();
+            PropertyInfo[] properties = typeof(T).GetProperties();
             foreach (PropertyInfo propertyInfo in properties)
             {
                 DataStoreAttribute dataStoreAttribute = propertyInfo.GetAttribute<DataStoreAttribute>();
@@ -315,7 +313,7 @@ namespace Ploc.Ploud.Library
                 }
 
                 sqlBuilder.AppendFormat("\"{0}\" ", dataStoreAttribute.Name);
-                if(propertyInfo.PropertyType == typeof(String))
+                if (propertyInfo.PropertyType == typeof(String))
                 {
                     sqlBuilder.Append(" TEXT ");
                 }
@@ -324,7 +322,7 @@ namespace Ploc.Ploud.Library
                     sqlBuilder.Append(" NUMERIC ");
                 }
 
-                if(dataStoreAttribute.IsPrimaryKey)
+                if (dataStoreAttribute.IsPrimaryKey)
                 {
                     sqlBuilder.Append(" PRIMARY KEY  NOT NULL ");
                 }

@@ -4,8 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -139,7 +137,7 @@ namespace Ploc.Ploud.Library
         private SQLiteConnection GetWriteableConnection()
         {
             bool isLocked = this.LockFile.Lock();
-            if(!isLocked)
+            if (!isLocked)
             {
                 return null;
             }
@@ -763,7 +761,7 @@ namespace Ploc.Ploud.Library
             long millisecondsSince1970 = DateTime.UtcNow.AddDays(-1).GetMillisecondsSince1970();
             using (SQLiteCommand command = sqliteConnection.CreateCommand())
             {
-                foreach(String tableName in Config.Data.TableNames)
+                foreach (String tableName in Config.Data.TableNames)
                 {
                     command.CommandType = CommandType.Text;
                     command.CommandTimeout = CommandTimeout;

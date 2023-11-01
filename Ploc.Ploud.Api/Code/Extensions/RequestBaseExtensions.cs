@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Ploc.Ploud.Library;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api
@@ -12,10 +10,10 @@ namespace Ploc.Ploud.Api
         public async static Task<AuthenticationResponse> AuthenticateAsync(this AuthenticationRequest request, IAuthenticationService authenticationService, IMemoryCache memoryCache)
         {
             AuthenticationResponse authenticationResponse = memoryCache.Get<AuthenticationResponse>(request.Token);
-            if(authenticationResponse == null)
+            if (authenticationResponse == null)
             {
                 authenticationResponse = await authenticationService.AuthenticateAsync(request);
-                if(authenticationResponse.IsAuthenticated)
+                if (authenticationResponse.IsAuthenticated)
                 {
                     MemoryCacheEntryOptions cacheExpiryOptions = CreateMemoryCacheEntryOptions();
                     memoryCache.Set<AuthenticationResponse>(request.Token, authenticationResponse, cacheExpiryOptions);

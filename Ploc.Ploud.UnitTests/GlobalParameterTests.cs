@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ploc.Ploud.Library;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -114,10 +113,10 @@ namespace Ploc.Ploud.UnitTests
             item.Identifier = Shared.ObjectIdentifier;
             item.Name = Shared.ObjectName;
             await item.SaveAsync();
-            
+
             IList<GlobalParameter> items1 = await cellar.GetAllAsync<GlobalParameter>();
             await items1[0].DeleteAsync();
-            
+
             IList<GlobalParameter> items2 = await cellar.GetAllAsync<GlobalParameter>();
             Assert.IsTrue((items1.Count - 1) == items2.Count);
         }

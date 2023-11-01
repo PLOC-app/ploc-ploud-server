@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
@@ -13,11 +9,11 @@ namespace Ploc.Ploud.Library
         public PloudObjectCollection<Country> Countries { get; set; }
 
         public PloudObjectCollection<Region> Regions { get; set; }
-        
+
         public PloudObjectCollection<Appellation> Appellations { get; set; }
 
         public PloudObjectCollection<Color> Colors { get; set; }
-        
+
         public PloudObjectCollection<Grapes> Grapes { get; set; }
 
         public PloudObjectCollection<Classification> Classifications { get; set; }
@@ -46,7 +42,7 @@ namespace Ploc.Ploud.Library
 
         public PloudObjectCollection<DeletedObject> AllDeletedObjects(ICellar cellar)
         {
-            if(this.DeletedObjects != null)
+            if (this.DeletedObjects != null)
             {
                 foreach (DeletedObject deletedObject in this.DeletedObjects)
                 {
@@ -60,7 +56,7 @@ namespace Ploc.Ploud.Library
         public PloudObjectCollection<IPloudObject> AllObjects(ICellar cellar)
         {
             PloudObjectCollection<IPloudObject> allObjects = new PloudObjectCollection<IPloudObject>();
-            if((this.Countries != null)
+            if ((this.Countries != null)
                 && (this.Countries.Count > 0))
             {
                 allObjects.AddRange(this.Countries);
@@ -157,7 +153,7 @@ namespace Ploc.Ploud.Library
 
         internal void RemoveEmptyCollection()
         {
-            if(this.Countries.Count == 0)
+            if (this.Countries.Count == 0)
             {
                 this.Countries = null;
             }

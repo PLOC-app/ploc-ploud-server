@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
@@ -71,7 +67,7 @@ namespace Ploc.Ploud.Library
             String assemblyLocation = typeof(ICryptoProvider).Assembly.Location;
             String appDirectory = Path.GetDirectoryName(assemblyLocation);
             String configDirectory = Path.Combine(appDirectory, "config");
-            if(!Directory.Exists(configDirectory))
+            if (!Directory.Exists(configDirectory))
             {
                 Directory.CreateDirectory(configDirectory);
             }

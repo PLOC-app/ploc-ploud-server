@@ -60,7 +60,7 @@ namespace Ploc.Ploud.UnitTests
             item.Identifier = Shared.ObjectIdentifier;
             item.Name = Shared.ObjectName;
             await item.SaveAsync();
-            
+
             IList<Document> items2 = await cellar.GetAllAsync<Document>();
             Assert.IsTrue((items1.Count + 1) == items2.Count);
         }

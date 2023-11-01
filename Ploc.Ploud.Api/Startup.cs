@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Ploc.Ploud.Api.Code.ModelBinders;
-using System;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Ploc.Ploud.Api
 {
@@ -35,7 +30,7 @@ namespace Ploc.Ploud.Api
             services.AddControllers(options =>
             {
                 options.ModelBinderProviders.Insert(0, new SyncObjectsBinderProvider());
-                
+
             }).AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.IgnoreNullValues = true;

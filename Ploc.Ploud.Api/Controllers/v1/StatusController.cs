@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Ploc.Ploud.Library;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api.Controllers
 {
@@ -15,6 +9,7 @@ namespace Ploc.Ploud.Api.Controllers
     public class StatusController : ApiControllerBase
     {
         [HttpGet]
+        [HttpHead]
         public IActionResult Get()
         {
             long ticks = Stopwatch.GetTimestamp();

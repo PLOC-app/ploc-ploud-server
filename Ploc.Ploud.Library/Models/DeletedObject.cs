@@ -32,10 +32,11 @@ namespace Ploc.Ploud.Library
             get
             {
                 MappingToAttribute mappingToAttribute = this.Type.GetAttribute<MappingToAttribute>();
-                if(mappingToAttribute == null)
+                if (mappingToAttribute == null)
                 {
                     throw new NotSupportedException(this.Type.ToString());
                 }
+
                 Type ploudObjectType = mappingToAttribute.Type;
                 return this.Cellar.Get(this.Identifier, ploudObjectType);
             }

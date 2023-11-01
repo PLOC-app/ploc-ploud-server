@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -11,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api
 {
-    public class AuthenticationService  : IAuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "Authorization/Ploud/");
 
@@ -29,7 +25,7 @@ namespace Ploc.Ploud.Api
                         using (HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false))
                         {
                             authenticationResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
-                            if(authenticationResponse == null)
+                            if (authenticationResponse == null)
                             {
                                 authenticationResponse = new AuthenticationResponse();
                                 authenticationResponse.IsAuthenticated = false;

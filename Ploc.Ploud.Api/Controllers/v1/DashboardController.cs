@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -26,7 +25,7 @@ namespace Ploc.Ploud.Api.Controllers
             IMemoryCache memoryCache,
             IAuthenticationService authenticationService,
             ISignatureService signatureService,
-            ILogger<DashboardController> logger, 
+            ILogger<DashboardController> logger,
             IOptions<PloudSettings> options)
         {
             this.dashboardService = dashboardService;

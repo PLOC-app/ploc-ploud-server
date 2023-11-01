@@ -1,6 +1,5 @@
 ﻿using Ploc.Ploud.Library;
 using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.IO;
 
@@ -16,7 +15,7 @@ namespace Ploc.Ploud.UnitTests
 
         public static void CopyDatabase(String destFilePath)
         {
-            if(File.Exists(destFilePath))
+            if (File.Exists(destFilePath))
             {
                 return;
             }
@@ -44,9 +43,9 @@ namespace Ploc.Ploud.UnitTests
             return new Cellar(DatabasePath(key));
         }
 
-        public static String DatabasePath (String key)
-        { 
-            if(!databases.ContainsKey(key))
+        public static String DatabasePath(String key)
+        {
+            if (!databases.ContainsKey(key))
             {
                 databases.TryAdd(key, Path.Combine(Path.GetTempPath(), "PLOUD." + key + ".co"));
             }

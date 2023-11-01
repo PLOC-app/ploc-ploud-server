@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Ploc.Ploud.Library
 {
@@ -134,7 +133,7 @@ namespace Ploc.Ploud.Library
             }
             catch
             {
-               
+
             }
             return success;
         }
@@ -148,7 +147,7 @@ namespace Ploc.Ploud.Library
                     KeyContainerName = KeyContainerName
                 };
                 cspParameters.Flags |= CspProviderFlags.UseMachineKeyStore;
-                if (!excludeFlags) 
+                if (!excludeFlags)
                 {
                     cspParameters.Flags |= CspProviderFlags.UseArchivableKey | CspProviderFlags.NoPrompt;
                 }
@@ -158,7 +157,7 @@ namespace Ploc.Ploud.Library
         }
 
         private ICryptoServiceProvider CreateProvider()
-        { 
+        {
             return CreateProvider(false);
         }
 

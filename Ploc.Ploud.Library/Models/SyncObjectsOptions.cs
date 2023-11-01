@@ -6,14 +6,15 @@ namespace Ploc.Ploud.Library
     {
         public SyncObjectsOptions(long timestamp, String callerId)
         {
-            if(timestamp == 0)
+            if (timestamp == 0)
             {
                 throw new ArgumentNullException("Timestamp");
             }
-            if(String.IsNullOrEmpty(callerId))
+            if (String.IsNullOrEmpty(callerId))
             {
                 throw new ArgumentNullException("CallerId");
             }
+
             this.Timestamp = timestamp;
             this.CallerId = callerId;
         }
