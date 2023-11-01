@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Ploc.Ploud.Library;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -28,12 +26,12 @@ namespace Ploc.Ploud.Api.Code.ModelBinders
                 PropertyNameCaseInsensitive = true
             };
             SyncObjects syncObjects = JsonSerializer.Deserialize<SyncObjects>(rawSyncObjects, jsonSerializerOptions);
-            if(syncObjects == null)
+            if (syncObjects == null)
             {
                 return Task.CompletedTask;
             }
             bindingContext.Result = ModelBindingResult.Success(syncObjects);
-            
+
             return Task.CompletedTask;
         }
     }

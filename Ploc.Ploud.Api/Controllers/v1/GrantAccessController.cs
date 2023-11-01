@@ -20,7 +20,7 @@ namespace Ploc.Ploud.Api.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            if((String.IsNullOrEmpty(this.ploudSettings.HmacKey))
+            if ((String.IsNullOrEmpty(this.ploudSettings.HmacKey))
                 | (this.ploudSettings.PublicKey == Guid.Empty))
             {
                 return BadRequest();

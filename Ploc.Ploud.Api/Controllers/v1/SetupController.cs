@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Ploc.Ploud.Library;
@@ -16,7 +15,7 @@ namespace Ploc.Ploud.Api.Controllers
         private readonly PloudSettings ploudSettings;
 
         public SetupController(
-            ILogger<SetupController> logger, 
+            ILogger<SetupController> logger,
             IOptions<PloudSettings> options)
         {
             this.logger = logger;
@@ -25,7 +24,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         [Route("Rsa/Export")]
         [HttpGet]
-        public async Task<IActionResult> ExportRsaKey([FromQuery]RsaKeyRequest request)
+        public async Task<IActionResult> ExportRsaKey([FromQuery] RsaKeyRequest request)
         {
             if ((request == null)
                 || (String.IsNullOrEmpty(request.PrivateKey)))
@@ -60,7 +59,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         [Route("Rsa/Import")]
         [HttpPost]
-        public async Task<IActionResult> ImportRsaKey([FromBody]RsaKeyRequest request)
+        public async Task<IActionResult> ImportRsaKey([FromBody] RsaKeyRequest request)
         {
             if ((request == null)
                 || (String.IsNullOrEmpty(request.PrivateKey))

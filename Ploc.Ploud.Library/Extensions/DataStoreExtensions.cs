@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Library
 {
@@ -13,7 +10,7 @@ namespace Ploc.Ploud.Library
         {
             String dataStoreName = type.Name.ToLower();
             DataStoreAttribute attribute = type.GetAttribute<DataStoreAttribute>();
-            if(attribute != null)
+            if (attribute != null)
             {
                 dataStoreName = attribute.Name;
             }
@@ -34,6 +31,6 @@ namespace Ploc.Ploud.Library
                 dataStoreAttributes.Add(dataStoreAttribute);
             }
             return dataStoreAttributes;
-        } 
+        }
     }
 }

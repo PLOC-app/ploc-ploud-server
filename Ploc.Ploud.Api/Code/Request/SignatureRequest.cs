@@ -1,8 +1,4 @@
-﻿using Ploc.Ploud.Library;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Ploc.Ploud.Api
 {
@@ -13,6 +9,8 @@ namespace Ploc.Ploud.Api
             public const String Initialize = "initialize";
 
             public const String Uninitialize = "uninitialize";
+
+            public const String EraseData = "erasedata";
 
             public const String Download = "download";
 

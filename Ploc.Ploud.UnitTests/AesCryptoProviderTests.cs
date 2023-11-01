@@ -11,7 +11,6 @@ namespace Ploc.Ploud.UnitTests
         [TestMethod]
         public void TestEncryptDescryptAreEqualUsingSameInstance()
         {
-            
             ICryptoProvider aesCryptoProvider = new AesCryptoProvider();
 
             Rack rack = new Rack();
@@ -22,7 +21,7 @@ namespace Ploc.Ploud.UnitTests
             {
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault
             };
-            
+
             String jsonContent = JsonSerializer.Serialize(rack, serializerOptions);
             Console.WriteLine(jsonContent);
 

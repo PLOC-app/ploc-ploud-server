@@ -1,24 +1,20 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Ploc.Ploud.Library;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api
 {
-    public class InitializeRequest  : RequestBase
+    public class InitializeRequest : RequestBase
     {
         public IFormFile File { get; set; }
 
         public override ValidationStatus Validate()
         {
             ValidationStatus validationStatus = base.Validate();
-            if(validationStatus != ValidationStatus.Ok)
+            if (validationStatus != ValidationStatus.Ok)
             {
                 return validationStatus;
             }
-            if((this.File == null)
+            if ((this.File == null)
                 || (this.File.Length < 1024))
             {
                 return ValidationStatus.InvalidParams;
@@ -28,7 +24,7 @@ namespace Ploc.Ploud.Api
 
         internal static InitializeRequest FromHeaders(HttpRequest request)
         {
-            if(!request.ContentLength.HasValue)
+            if (!request.ContentLength.HasValue)
             {
                 return null;
             }

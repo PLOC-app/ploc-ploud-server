@@ -247,6 +247,61 @@ namespace Ploc.Ploud.Api.Controllers.v1
             });
         }
 
+        [Route("EraseData")]
+        [HttpPost]
+        public async Task<IActionResult> EraseData(EraseDataRequest request)
+        {
+            if (request == null)
+            {
+                this.logger.LogWarning("EraseData(), Request = NULL");
+                return BadRequest();
+            }
+
+            this.logger.LogInformation("EraseData.Start(), Token = {Token}", request.Token);
+
+            ValidationStatus validationStatus = request.Validate();
+            if (validationStatus != ValidationStatus.Ok)
+            {
+                this.logger.LogWarning("EraseData.Validate(), Status = {ValidationStatus}", validationStatus);
+                return BadRequest(validationStatus);
+            }
+
+            if (this.ploudSettings.VerifySignature)
+            {
+                SignatureRequest signatureRequest = request.ToSignatureRequest(this.ploudSettings.PublicKey, SignatureRequest.Methods.EraseData);
+                SignatureResponse signatureResponse = await signatureRequest.VerifySignatureAsync(this.signatureService);
+                if ((signatureResponse == null)
+                    || (!signatureResponse.IsValid))
+                {
+                    this.logger.LogWarning("EraseData.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
+                    this.logger.LogWarning("EraseData.VerifySignature(), Request = {Request}", JsonSerializer.Serialize(signatureRequest));
+                    return Forbid(ValidationStatus.InvalidSignature);
+                }
+            }
+
+            AuthenticationRequest authenticationRequest = request.ToAuthenticationRequest(this.ploudSettings.PublicKey);
+            AuthenticationResponse authenticationResponse = await authenticationRequest.AuthenticateAsync(this.authenticationService, this.memoryCache);
+            if ((authenticationResponse == null)
+                || (!authenticationResponse.IsAuthenticated))
+            {
+                this.logger.LogWarning("EraseData.Authenticate(), Token = {Token}", authenticationRequest.Token);
+                return Forbid(ValidationStatus.InvalidToken);
+            }
+
+            String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
+            String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
+            SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath);
+            bool success = await request.EraseDataAsync(this.syncService, syncSettings);
+            if (!success)
+            {
+                return InternalServerError(ValidationStatus.ServerError);
+            }
+            return Ok(new
+            {
+                Status = Config.Success
+            });
+        }
+
         [Route("documents/{document}/")]
         [HttpPost]
         public async Task<IActionResult> GetDocument(DocumentRequest request)

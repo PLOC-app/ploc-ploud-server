@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -18,7 +17,7 @@ namespace Ploc.Ploud.Library
         public bool Lock()
         {
             int retryCount = 0;
-            while(true)
+            while (true)
             {
                 try
                 {
@@ -32,7 +31,7 @@ namespace Ploc.Ploud.Library
                         return false;
                     }
                 }
-                if(File.Exists(this.LockFilePath))
+                if (File.Exists(this.LockFilePath))
                 {
                     break;
                 }
@@ -53,7 +52,7 @@ namespace Ploc.Ploud.Library
                 {
                     File.Delete(this.LockFilePath);
                     break;
-                } 
+                }
                 catch
                 {
                     Thread.Sleep(Config.Data.RetryDelay);

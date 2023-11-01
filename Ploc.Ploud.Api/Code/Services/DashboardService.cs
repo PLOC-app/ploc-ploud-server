@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Ploc.Ploud.Library;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using Ploc.Ploud.Library;
 using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api

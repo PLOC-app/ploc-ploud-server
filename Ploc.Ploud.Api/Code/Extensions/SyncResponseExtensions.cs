@@ -7,12 +7,12 @@ namespace Ploc.Ploud.Api
     {
         public static void MapUrl(this PloudObjectCollection<Document> documents, String downloadFileUrlFormat)
         {
-            if((documents == null)
+            if ((documents == null)
                 || (documents.Count == 0))
             {
                 return;
             }
-            foreach(Document document in documents)
+            foreach (Document document in documents)
             {
                 document.Data = null;
                 document.Url = String.Format(downloadFileUrlFormat, document.Identifier);

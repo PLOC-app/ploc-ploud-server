@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -57,7 +56,7 @@ namespace Ploc.Ploud.Library
         public IPloudObject CreateObject(Type ploudObjectType)
         {
             IPloudObject obj = Activator.CreateInstance(ploudObjectType) as IPloudObject;
-            if(obj == null)
+            if (obj == null)
             {
                 throw new ArgumentException(String.Concat(ploudObjectType.ToString(), " != IPloudObject"));
             }
@@ -69,10 +68,10 @@ namespace Ploc.Ploud.Library
         {
             this.Repository.CreateStorage<PloudSecret>();
             PloudSecret ploudSecret = this.Repository.Get<PloudSecret>(PloudSecret.GlobalIdentifier);
-            if(ploudSecret == null)
+            if (ploudSecret == null)
             {
                 AesCryptoProvider aesCryptoProvider = new AesCryptoProvider();
-                ploudSecret = this.CreateObject<PloudSecret>(); 
+                ploudSecret = this.CreateObject<PloudSecret>();
                 ploudSecret.Key = aesCryptoProvider.EncryptedKey;
                 ploudSecret.Iv = aesCryptoProvider.EncryptedIv;
                 ploudSecret.Version = Config.Version;
@@ -88,7 +87,7 @@ namespace Ploc.Ploud.Library
 
         public bool IsValid()
         {
-            if(!File.Exists(this.DatabasePath))
+            if (!File.Exists(this.DatabasePath))
             {
                 return false;
             }
@@ -132,7 +131,7 @@ namespace Ploc.Ploud.Library
         public SyncObjects GetSyncObjects(SyncObjectsOptions options)
         {
             IQuery ploudObjectsQuery = new Query.Builder()
-                .AddFilter("tp",ExpressionType.GreaterThanOrEqual, options.Timestamp)
+                .AddFilter("tp", ExpressionType.GreaterThanOrEqual, options.Timestamp)
                 .AddFilter("sid", ExpressionType.NotEqual, options.CallerId)
                 .Build();
 

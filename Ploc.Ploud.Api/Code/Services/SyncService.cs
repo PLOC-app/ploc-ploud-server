@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Ploc.Ploud.Library;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -149,7 +148,7 @@ namespace Ploc.Ploud.Api
                     Logger.Error(ex);
                 }
             }
-            if(!success)
+            if (!success)
             {
                 File.Delete(syncSettings.PloudFilePath);
                 return false;
@@ -160,7 +159,7 @@ namespace Ploc.Ploud.Api
             {
                 success = await cellar.ExecuteAsync(CellarOperation.ClearTimestamp);
             }
-            if(!success)
+            if (!success)
             {
                 File.Delete(syncSettings.PloudFilePath);
             }
@@ -168,6 +167,11 @@ namespace Ploc.Ploud.Api
         }
 
         public async Task<bool> UninitializeAsync(UninitializeRequest request, SyncSettings syncSettings)
+        {
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> EraseDataAsync(EraseDataRequest request, SyncSettings syncSettings)
         {
             // Delete all files
             await Task.Run(() =>
@@ -180,7 +184,7 @@ namespace Ploc.Ploud.Api
 
         private void Delete(String fileOrDirectory)
         {
-            if((!Directory.Exists(fileOrDirectory))
+            if ((!Directory.Exists(fileOrDirectory))
                 && (!File.Exists(fileOrDirectory)))
             {
                 return;

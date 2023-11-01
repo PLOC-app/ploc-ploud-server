@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ploc.Ploud.Library;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -84,8 +83,8 @@ namespace Ploc.Ploud.UnitTests
             RackItem item = cellar.CreateObject<RackItem>();
             item.Identifier = Shared.ObjectIdentifier;
             item.Name = Shared.ObjectName;
-            item.Save(); 
-            
+            item.Save();
+
             IList<RackItem> items1 = cellar.GetAll<RackItem>();
             items1[0].Delete();
             IList<RackItem> items2 = cellar.GetAll<RackItem>();

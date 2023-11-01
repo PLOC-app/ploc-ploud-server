@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -31,7 +30,7 @@ namespace Ploc.Ploud.Api
                                 Trace.TraceError(json);
                                 return signatureResponse;
                             }
-                            signatureResponse.IsValid = true;
+                            signatureResponse.IsValid = true; // TODO
                         }
                     }
                 }

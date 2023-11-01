@@ -1,7 +1,5 @@
 ﻿using Ploc.Ploud.Library;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api
@@ -17,5 +15,7 @@ namespace Ploc.Ploud.Api
         Task<bool> InitializeAsync(InitializeRequest request, SyncSettings syncSettings);
 
         Task<bool> UninitializeAsync(UninitializeRequest request, SyncSettings syncSettings);
+
+        Task<bool> EraseDataAsync(EraseDataRequest request, SyncSettings syncSettings);
     }
 }
