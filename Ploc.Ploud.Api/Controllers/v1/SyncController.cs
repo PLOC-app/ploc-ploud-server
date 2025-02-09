@@ -44,6 +44,8 @@ namespace Ploc.Ploud.Api.Controllers.v1
 
         [Route("Exec")]
         [HttpPost]
+        [DisableRequestSizeLimit]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         public async Task<IActionResult> Exec([FromForm] SyncRequest request)
         {
             if (request == null)
@@ -118,69 +120,84 @@ namespace Ploc.Ploud.Api.Controllers.v1
             });
         }
 
-
         [Route("Initialize")]
         [HttpPost]
+        [DisableRequestSizeLimit]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         public async Task<IActionResult> Initialize([FromForm] InitializeRequest request)
         {
-            if ((request == null)
-                || (request.File == null))
-
+            if (request == null || request.File == null)
             {
                 request = InitializeRequest.FromHeaders(this.Request);
             }
-            if ((request == null)
-                || (request.File == null))
+
+            if (request == null || request.File == null)
             {
-                this.logger.LogWarning("Initialize(), Request = NULL");
-                return BadRequest(ValidationStatus.InvalidParams);
+                if (request == null)
+                {
+                    this.logger.LogWarning("Initialize(), Request = NULL");
+                }
+                else
+                {
+                    this.logger.LogWarning("Initialize(), Request.File = NULL");
+                }
+
+                return this.BadRequest(ValidationStatus.InvalidParams);
             }
 
             this.logger.LogInformation("Initialize.Start(), Token = {Token}", request.Token);
 
             ValidationStatus validationStatus = request.Validate();
+
             if (validationStatus != ValidationStatus.Ok)
             {
                 this.logger.LogWarning("Initialize.Validate(), Status = {ValidationStatus}", validationStatus);
-                return BadRequest(validationStatus);
+                
+                return this.BadRequest(validationStatus);
             }
 
             if (this.ploudSettings.VerifySignature)
             {
                 SignatureRequest signatureRequest = request.ToSignatureRequest(this.ploudSettings.PublicKey, SignatureRequest.Methods.Initialize);
                 SignatureResponse signatureResponse = await signatureRequest.VerifySignatureAsync(this.signatureService);
-                if ((signatureResponse == null)
-                    || (!signatureResponse.IsValid))
+
+                if (signatureResponse == null || !signatureResponse.IsValid)
                 {
                     this.logger.LogWarning("Initialize.VerifySignature(), Signature = {Signature}", signatureRequest.Signature);
-                    return Forbid(ValidationStatus.InvalidSignature);
+
+                    return this.Forbid(ValidationStatus.InvalidSignature);
                 }
             }
 
             AuthenticationRequest authenticationRequest = request.ToAuthenticationRequest(this.ploudSettings.PublicKey);
             AuthenticationResponse authenticationResponse = await authenticationRequest.AuthenticateAsync(this.authenticationService, this.memoryCache);
-            if ((authenticationResponse == null)
-                || (!authenticationResponse.IsAuthenticated))
+
+            if (authenticationResponse == null || !authenticationResponse.IsAuthenticated)
             {
                 this.logger.LogWarning("Initialize.Authenticate(), Token = {Token}", authenticationRequest.Token);
-                return Forbid(ValidationStatus.InvalidToken);
+
+                return this.Forbid(ValidationStatus.InvalidToken);
             }
 
-            String ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
+            string ploudFilePath = this.ploudSettings.GetPloudFilePath(authenticationResponse.FolderName, authenticationResponse.FileName);
+
             if (System.IO.File.Exists(ploudFilePath))
             {
                 this.logger.LogError("Initialize.GetPloudFilePath(PloudAlreadyInitialized), PloudFilePath = {PloudFilePath}", ploudFilePath);
-                return BadRequest(ValidationStatus.PloudAlreadyInitialized);
-            }
-            String ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
-            SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath);
-            bool success = await request.InitializeAsync(this.syncService, syncSettings);
-            if (!success)
-            {
-                return InternalServerError(ValidationStatus.ServerError);
+
+                return this.BadRequest(ValidationStatus.PloudAlreadyInitialized);
             }
 
-            return Ok(new
+            string ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
+            SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath);
+            bool success = await request.InitializeAsync(this.syncService, syncSettings);
+
+            if (!success)
+            {
+                return this.InternalServerError(ValidationStatus.ServerError);
+            }
+
+            return this.Ok(new
             {
                 Status = Config.Success
             });

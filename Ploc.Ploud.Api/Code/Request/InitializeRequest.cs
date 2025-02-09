@@ -28,11 +28,14 @@ namespace Ploc.Ploud.Api
             {
                 return null;
             }
+
             if (!request.Headers.ContainsKey("token"))
             {
                 return null;
             }
+            
             request.EnableBuffering();
+            
             InitializeRequest initializeRequest = new InitializeRequest();
             initializeRequest.Token = request.Headers["token"];
             initializeRequest.Device = request.Headers["device"];
@@ -44,6 +47,7 @@ namespace Ploc.Ploud.Api
                 Headers = new HeaderDictionary(),
                 ContentType = request.ContentType
             };
+
             return initializeRequest;
         }
     }
