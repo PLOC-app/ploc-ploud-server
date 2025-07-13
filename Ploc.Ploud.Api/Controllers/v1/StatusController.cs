@@ -15,16 +15,18 @@ namespace Ploc.Ploud.Api.Controllers
             long ticks = Stopwatch.GetTimestamp();
             var uptime = ((double)ticks) / Stopwatch.Frequency;
             var uptimeSpan = TimeSpan.FromSeconds(uptime);
+
             var status = new
             {
                 Status = Config.Success,
                 Uptime = uptimeSpan,
                 Host = Environment.MachineName,
-                Url = String.Concat(this.Request.Scheme, "://", this.Request.Host, "/"),
+                Url = string.Concat(this.Request.Scheme, "://", this.Request.Host, "/"),
                 Now = DateTime.Now,
                 UtcNow = DateTime.UtcNow
             };
-            return Ok(status);
+
+            return this.Ok(status);
         }
     }
 }

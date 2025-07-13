@@ -1,17 +1,15 @@
-﻿using System;
-
-namespace Ploc.Ploud.Api
+﻿namespace Ploc.Ploud.Api
 {
     public class AuthenticationResponse
     {
         public bool IsAuthenticated { get; set; }
 
-        public String ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; }
 
-        public String HashedMd5Email { get; set; } // If you want to add a security layer.
+        public string HashedMd5Email { get; set; } // If you want to add a security layer.
 
-        public String FolderName { get; set; }
+        public string FolderName { get; set; }
 
-        public String FileName { get; set; }
+        public string FileName { get; set; }
     }
 }

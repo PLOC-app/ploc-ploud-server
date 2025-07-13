@@ -20,24 +20,27 @@ namespace Ploc.Ploud.Api.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            if ((String.IsNullOrEmpty(this.ploudSettings.HmacKey))
-                | (this.ploudSettings.PublicKey == Guid.Empty))
+            if (string.IsNullOrEmpty(this.ploudSettings.HmacKey) | this.ploudSettings.PublicKey == Guid.Empty)
             {
-                return BadRequest();
+                return this.BadRequest();
             }
+
             long timestamp = DateTime.UtcNow.GetSecondsSince1970();
-            String signature = String.Concat(this.ploudSettings.PublicKey, timestamp, Config.Actions.Grant).HMac(this.ploudSettings.HmacKey);
-            String link = String.Format("https://app.PLOC.pro/Services/PLOUD/?{0}=1&Timestamp={1}&Signature={2}&App={3}", Config.Actions.Grant, timestamp, HttpUtility.UrlEncode(signature), this.ploudSettings.PublicKey);
-            if ((Request.Query.ContainsKey("print"))
-                | (Request.Query.ContainsKey("json")))
+            string signature = String.Concat(this.ploudSettings.PublicKey, timestamp, Config.Actions.Grant)
+                .HMac(this.ploudSettings.HmacKey);
+
+            string link = String.Format("https://app.PLOC.pro/Services/PLOUD/?{0}=1&Timestamp={1}&Signature={2}&App={3}", Config.Actions.Grant, timestamp, HttpUtility.UrlEncode(signature), this.ploudSettings.PublicKey);
+
+            if (Request.Query.ContainsKey("print") | Request.Query.ContainsKey("json"))
             {
-                return Ok(new
+                return this.Ok(new
                 {
                     Status = Config.Success,
                     Link = link
                 });
             }
-            return Redirect(link);
+
+            return this.Redirect(link);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -9,22 +8,26 @@ namespace Ploc.Ploud.Api
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "Authorization/Ploud/");
+        private static readonly string ServiceUrl = string.Concat(Config.ApiUrl, "Authorization/Ploud/");
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest authenticationRequest)
         {
             AuthenticationResponse authenticationResponse = null;
+
             using (HttpClient client = new HttpClient())
             {
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl))
                 {
-                    String json = JsonSerializer.Serialize(authenticationRequest);
+                    string json = JsonSerializer.Serialize(authenticationRequest);
+                    
                     using (StringContent stringContent = new StringContent(json, Encoding.UTF8, "application/json"))
                     {
                         request.Content = stringContent;
+                        
                         using (HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false))
                         {
                             authenticationResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
+                        
                             if (authenticationResponse == null)
                             {
                                 authenticationResponse = new AuthenticationResponse();
@@ -34,6 +37,7 @@ namespace Ploc.Ploud.Api
                     }
                 }
             }
+
             return authenticationResponse;
         }
     }

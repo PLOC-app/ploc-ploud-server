@@ -8,6 +8,7 @@ namespace Ploc.Ploud.Library
         public static void Error(Exception ex)
         {
             Trace.TraceError(ex.ToString());
+
             Console.WriteLine(ex);
         }
     }
