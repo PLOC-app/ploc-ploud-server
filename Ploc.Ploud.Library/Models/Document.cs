@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Ploc.Ploud.Library
 {
@@ -8,11 +7,11 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("kw")]
         [DataStore("keywords")]
-        public String Keywords { get; set; }
+        public string Keywords { get; set; }
 
         [JsonPropertyName("pa")]
         [DataStore("parent")]
-        public String Parent { get; set; }
+        public string Parent { get; set; }
 
         [JsonPropertyName("pt")]
         [DataStore("parenttype")]
@@ -20,15 +19,15 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("tg")]
         [DataStore("tags")]
-        public String Tags { get; set; }
+        public string Tags { get; set; }
 
         [JsonPropertyName("ct")]
         [DataStore("contenttype")]
-        public String ContentType { get; set; }
+        public string ContentType { get; set; }
 
         [JsonPropertyName("op")]
         [DataStore("originalpath")]
-        public String OriginalPath { get; set; }
+        public string OriginalPath { get; set; }
 
         [JsonPropertyName("lt")]
         [DataStore("length")]
@@ -55,6 +54,6 @@ namespace Ploc.Ploud.Library
         public byte[] Data { get; set; }
 
         [JsonPropertyName("url")]
-        public String Url { get; set; }
+        public string Url { get; set; }
     }
 }
