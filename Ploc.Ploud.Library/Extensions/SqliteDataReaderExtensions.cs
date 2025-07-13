@@ -68,9 +68,13 @@ namespace Ploc.Ploud.Library
                 {
                     TryConvert(() =>
                     {
-                        Int32 intValue = Convert.ToInt32(rawValue);
-                        propertyInfo.SetValue(obj, intValue);
-
+                        long longValue = Convert.ToInt64(rawValue);
+                        // Fix iOS Bug PLOC < v5.0
+                        if (longValue >= Int32.MinValue && longValue <= Int32.MaxValue)
+                        {
+                            Int32 intValue = (Int32)(longValue);
+                            propertyInfo.SetValue(obj, intValue);
+                        }
                     }, typeOfT, propertyInfo.Name, rawValue);
                 }
                 else if (propertyInfo.PropertyType == typeof(Int64))

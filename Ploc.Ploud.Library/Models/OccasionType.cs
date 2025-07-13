@@ -18,6 +18,8 @@
 
         Because = 64,
 
+        Inventory = 128,
+
         EphemeralCovid = 200
     }
 }

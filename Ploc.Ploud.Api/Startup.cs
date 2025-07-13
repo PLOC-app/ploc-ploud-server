@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +27,10 @@ namespace Ploc.Ploud.Api
             services.AddSingleton<IDashboardService, DashboardService>();
             services.AddSingleton<ISyncService, SyncService>();
             services.Configure<PloudSettings>(Configuration.GetSection("Ploud"));
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
             services.AddSingleton<PloudSettings>(serviceProvider => serviceProvider.GetService<IOptions<PloudSettings>>().Value);
             services.AddControllers(options =>
             {
