@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Ploc.Ploud.Library
 {
@@ -12,6 +11,6 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("va")]
         [DataStore("value", true)]
-        public String Value { get; set; }
+        public string Value { get; set; }
     }
 }
