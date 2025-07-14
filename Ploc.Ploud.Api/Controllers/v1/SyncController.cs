@@ -101,9 +101,10 @@ namespace Ploc.Ploud.Api.Controllers.v1
                 return this.NotFound(ValidationStatus.PloudNotInitialized);
             }
 
-            string apiUrl = String.Concat(this.Request.Scheme, "://", this.Request.Host, "/");
+            string apiUrl = string.Concat(this.Request.Scheme, "://", this.Request.Host, "/");
             string ploudDirectory = this.ploudSettings.GetPloudDirectory(authenticationResponse.FolderName);
-            string downloadFileUrlFormat = String.Format("{0}v1/sync/documents/{{0}}", apiUrl);
+            string downloadFileUrlFormat = string.Format("{0}v1/sync/documents/{{0}}", apiUrl);
+
             SyncSettings syncSettings = new SyncSettings(ploudDirectory, ploudFilePath, downloadFileUrlFormat);
             SyncResponse syncResponse = await request.SynchronizeAsync(this.syncService, syncSettings);
             

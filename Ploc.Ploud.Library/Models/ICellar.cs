@@ -9,7 +9,7 @@ namespace Ploc.Ploud.Library
 
         ICellarRepository Repository { get; }
 
-        String DatabasePath { get; }
+        string DatabasePath { get; }
 
         T CreateObject<T>() where T : IPloudObject;
 

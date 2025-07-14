@@ -26,10 +26,10 @@ namespace Ploc.Ploud.Api.Controllers
             }
 
             long timestamp = DateTime.UtcNow.GetSecondsSince1970();
-            string signature = String.Concat(this.ploudSettings.PublicKey, timestamp, Config.Actions.Grant)
+            string signature = string.Concat(this.ploudSettings.PublicKey, timestamp, Config.Actions.Grant)
                 .HMac(this.ploudSettings.HmacKey);
 
-            string link = String.Format("https://app.PLOC.pro/Services/PLOUD/?{0}=1&Timestamp={1}&Signature={2}&App={3}", Config.Actions.Grant, timestamp, HttpUtility.UrlEncode(signature), this.ploudSettings.PublicKey);
+            string link = string.Format("https://app.PLOC.pro/Services/PLOUD/?{0}=1&Timestamp={1}&Signature={2}&App={3}", Config.Actions.Grant, timestamp, HttpUtility.UrlEncode(signature), this.ploudSettings.PublicKey);
 
             if (Request.Query.ContainsKey("print") | Request.Query.ContainsKey("json"))
             {

@@ -8,7 +8,7 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("pa")]
         [DataStore("parent")]
-        public String Country { get; set; }
+        public string Country { get; set; }
 
         public Country GetCountry()
         {

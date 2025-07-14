@@ -7,11 +7,11 @@ namespace Ploc.Ploud.Library
     {
         ICellar Cellar { get; set; }
 
-        String Identifier { get; set; }
+        string Identifier { get; set; }
 
-        String DeviceIdentifier { get; set; }
+        string DeviceIdentifier { get; set; }
 
-        String Name { get; set; }
+        string Name { get; set; }
 
         DateTime TimeCreated { get; set; }
 
