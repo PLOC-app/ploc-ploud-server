@@ -4,11 +4,11 @@ namespace Ploc.Ploud.Library
 {
     public class ExpressionValueAttribute : Attribute
     {
-        public ExpressionValueAttribute(String value)
+        public string Value { get; private set; }
+
+        public ExpressionValueAttribute(string value)
         {
             this.Value = value;
         }
-
-        public String Value { get; private set; }
     }
 }

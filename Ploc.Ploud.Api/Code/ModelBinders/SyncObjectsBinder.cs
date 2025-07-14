@@ -15,7 +15,8 @@ namespace Ploc.Ploud.Api.Code.ModelBinders
                 throw new ArgumentNullException(nameof(bindingContext));
             }
 
-            String rawSyncObjects = bindingContext.HttpContext.Request.Form["Objects"]; // TODO GetName from ?
+            string rawSyncObjects = bindingContext.HttpContext.Request.Form["Objects"]; // TODO GetName from ?
+
             if (string.IsNullOrEmpty(rawSyncObjects))
             {
                 return Task.CompletedTask;
@@ -25,11 +26,14 @@ namespace Ploc.Ploud.Api.Code.ModelBinders
             {
                 PropertyNameCaseInsensitive = true
             };
+
             SyncObjects syncObjects = JsonSerializer.Deserialize<SyncObjects>(rawSyncObjects, jsonSerializerOptions);
+            
             if (syncObjects == null)
             {
                 return Task.CompletedTask;
             }
+            
             bindingContext.Result = ModelBindingResult.Success(syncObjects);
 
             return Task.CompletedTask;

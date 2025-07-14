@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Ploc.Ploud.Api
+﻿namespace Ploc.Ploud.Api
 {
     public class RsaKeyRequest
     {
-        public String Data { get; set; }
+        public string Data { get; set; }
 
-        public String PrivateKey { get; set; }
+        public string PrivateKey { get; set; }
     }
 }

@@ -10,15 +10,17 @@ namespace Ploc.Ploud.Api
         public override ValidationStatus Validate()
         {
             ValidationStatus validationStatus = base.Validate();
+            
             if (validationStatus != ValidationStatus.Ok)
             {
                 return validationStatus;
             }
-            if ((this.File == null)
-                || (this.File.Length < 1024))
+
+            if (this.File == null || this.File.Length < 1024)
             {
                 return ValidationStatus.InvalidParams;
             }
+
             return ValidationStatus.Ok;
         }
 

@@ -16,25 +16,28 @@ namespace Ploc.Ploud.Api
         public override ValidationStatus Validate()
         {
             ValidationStatus validationStatus = base.Validate();
+
             if (validationStatus != ValidationStatus.Ok)
             {
                 return validationStatus;
             }
-            if (Objects == null)
+            
+            if (this.Objects == null)
             {
                 return ValidationStatus.InvalidParams;
             }
-            if (!ValidateFiles())
+            
+            if (!this.ValidateFiles())
             {
                 return ValidationStatus.InvalidParams;
             }
+
             return ValidationStatus.Ok;
         }
 
         private bool ValidateFiles()
         {
-            if ((this.Files != null)
-                && (this.Files.Count > 0))
+            if (this.Files != null && this.Files.Count > 0)
             {
                 foreach (IFormFile formFile in this.Files)
                 {
@@ -44,6 +47,7 @@ namespace Ploc.Ploud.Api
                     }
                 }
             }
+
             return true;
         }
     }

@@ -1,27 +1,25 @@
-﻿using System;
-
-namespace Ploc.Ploud.Api
+﻿namespace Ploc.Ploud.Api
 {
     public static class Config
     {
-        public const String Success = "success";
+        public const string Success = "success";
 
-        public const String Error = "error";
+        public const string Error = "error";
 
-        public const String ApiUrl = "https://api.ploc.co/v1/";
+        public const string ApiUrl = "https://api.ploc.co/v1/";
 
-        public const String CurrentVersion = "v1";
+        public const string CurrentVersion = "v1";
 
         public static class Folders
         {
-            public const String Data = "data";
+            public const string Data = "data";
         }
 
         public static class Actions
         {
-            public const String Grant = "Grant";
+            public const string Grant = "Grant";
 
-            public const String Revoke = "Revoke";
+            public const string Revoke = "Revoke";
         }
     }
 }

@@ -8,15 +8,15 @@ namespace Ploc.Ploud.Library
     {
         [DataStore("id", false, true)]
         [JsonPropertyName("id")]
-        public String Identifier { get; set; }
+        public string Identifier { get; set; }
 
         [DataStore("sid")]
         [JsonPropertyName("sid")]
-        public String DeviceIdentifier { get; set; }
+        public string DeviceIdentifier { get; set; }
 
         [DataStore("name", true)]
         [JsonPropertyName("nm")]
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         [DataStore("tc")]
         [JsonPropertyName("tc")]

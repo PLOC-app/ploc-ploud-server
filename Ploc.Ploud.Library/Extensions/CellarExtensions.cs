@@ -46,17 +46,17 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.SaveAsync(ploudObjects);
         }
 
-        public static IPloudObject Get(this ICellar cellar, String identifier, Type ploudObjectType)
+        public static IPloudObject Get(this ICellar cellar, string identifier, Type ploudObjectType)
         {
             return cellar.Repository.Get(identifier, ploudObjectType);
         }
 
-        public static T Get<T>(this ICellar cellar, String identifier) where T : IPloudObject
+        public static T Get<T>(this ICellar cellar, string identifier) where T : IPloudObject
         {
             return cellar.Repository.Get<T>(identifier);
         }
 
-        public static Task<T> GetAsync<T>(this ICellar cellar, String identifier) where T : IPloudObject
+        public static Task<T> GetAsync<T>(this ICellar cellar, string identifier) where T : IPloudObject
         {
             return cellar.Repository.GetAsync<T>(identifier);
         }
@@ -106,12 +106,12 @@ namespace Ploc.Ploud.Library
             return cellar.Repository.ExecuteAsync(cellarOperation);
         }
 
-        public static bool CopyTo(this ICellar cellar, String targetCellarPath)
+        public static bool CopyTo(this ICellar cellar, string targetCellarPath)
         {
             return cellar.Repository.CopyTo(targetCellarPath);
         }
 
-        public static Task<bool> CopyToAsync(this ICellar cellar, String targetCellarPath)
+        public static Task<bool> CopyToAsync(this ICellar cellar, string targetCellarPath)
         {
             return cellar.Repository.CopyToAsync(targetCellarPath);
         }

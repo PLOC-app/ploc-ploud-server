@@ -24,13 +24,13 @@ namespace Ploc.Ploud.Library
 
         Task<bool> SaveAsync<T>(IEnumerable<T> ploudObjects) where T : IPloudObject;
 
-        IPloudObject Get(String identifier, Type ploudObjectType);
+        IPloudObject Get(string identifier, Type ploudObjectType);
 
-        T Get<T>(String identifier) where T : IPloudObject;
+        T Get<T>(string identifier) where T : IPloudObject;
 
         T Get<T>(IQuery query) where T : IPloudObject;
 
-        Task<T> GetAsync<T>(String identifier) where T : IPloudObject;
+        Task<T> GetAsync<T>(string identifier) where T : IPloudObject;
 
         Task<T> GetAsync<T>(IQuery query) where T : IPloudObject;
 
@@ -46,9 +46,9 @@ namespace Ploc.Ploud.Library
 
         Task<bool> ExecuteAsync(CellarOperation cellarOperation);
 
-        bool CopyTo(String targetCellarPath);
+        bool CopyTo(string targetCellarPath);
 
-        Task<bool> CopyToAsync(String targetCellarPath);
+        Task<bool> CopyToAsync(string targetCellarPath);
 
         Dashboard GetDashboard();
 

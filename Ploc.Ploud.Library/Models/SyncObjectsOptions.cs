@@ -4,13 +4,18 @@ namespace Ploc.Ploud.Library
 {
     public sealed class SyncObjectsOptions
     {
-        public SyncObjectsOptions(long timestamp, String callerId)
+        public long Timestamp { get; private set; }
+
+        public string CallerId { get; private set; }
+
+        public SyncObjectsOptions(long timestamp, string callerId)
         {
             if (timestamp == 0)
             {
                 throw new ArgumentNullException("Timestamp");
             }
-            if (String.IsNullOrEmpty(callerId))
+
+            if (string.IsNullOrEmpty(callerId))
             {
                 throw new ArgumentNullException("CallerId");
             }
@@ -18,9 +23,5 @@ namespace Ploc.Ploud.Library
             this.Timestamp = timestamp;
             this.CallerId = callerId;
         }
-
-        public long Timestamp { get; private set; }
-
-        public String CallerId { get; private set; }
     }
 }

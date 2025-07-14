@@ -1,30 +1,28 @@
-﻿using System;
-
-namespace Ploc.Ploud.Api
+﻿namespace Ploc.Ploud.Api
 {
     public class SignatureRequest : RequestBase
     {
         public static class Methods
         {
-            public const String Initialize = "initialize";
+            public const string Initialize = "initialize";
 
-            public const String Uninitialize = "uninitialize";
+            public const string Uninitialize = "uninitialize";
 
-            public const String EraseData = "erasedata";
+            public const string EraseData = "erasedata";
 
-            public const String Download = "download";
+            public const string Download = "download";
 
-            public const String Status = "status";
+            public const string Status = "status";
 
-            public const String Sync = "sync";
+            public const string Sync = "sync";
 
-            public const String GetDocument = "getdocument";
+            public const string GetDocument = "getdocument";
 
-            public const String GetDashboard = "getdashboard";
+            public const string GetDashboard = "getdashboard";
         }
 
-        public String Method { get; set; }
+        public string Method { get; set; }
 
-        public String ObjectId { get; set; }
+        public string ObjectId { get; set; }
     }
 }

@@ -7,6 +7,7 @@ namespace Ploc.Ploud.Library
         public static DateTime DateTimeValue(this long timestamp)
         {
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+
             return origin.AddSeconds(timestamp);
         }
 
@@ -14,6 +15,7 @@ namespace Ploc.Ploud.Library
         {
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             TimeSpan diff = date.ToUniversalTime() - origin;
+         
             return Convert.ToInt64(Math.Floor(diff.TotalSeconds));
         }
 
@@ -21,6 +23,7 @@ namespace Ploc.Ploud.Library
         {
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             TimeSpan diff = date.ToUniversalTime() - origin;
+
             return Convert.ToInt64(Math.Floor(diff.TotalMilliseconds));
         }
     }

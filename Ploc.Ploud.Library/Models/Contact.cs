@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Ploc.Ploud.Library
 {
@@ -7,55 +6,55 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("pid")]
         [DataStore("pid")]
-        public String PlocIdentifier { get; set; }
+        public string PlocIdentifier { get; set; }
 
         [JsonPropertyName("cm")]
         [DataStore("comments", true)]
-        public String Comments { get; set; }
+        public string Comments { get; set; }
 
         [JsonPropertyName("ct")]
         [DataStore("contact", true)]
-        public String ContactName { get; set; }
+        public string ContactName { get; set; }
 
         [JsonPropertyName("ph")]
         [DataStore("phone")]
-        public String Phone { get; set; }
+        public string Phone { get; set; }
 
         [JsonPropertyName("fa")]
         [DataStore("fax")]
-        public String Fax { get; set; }
+        public string Fax { get; set; }
 
         [JsonPropertyName("mo")]
         [DataStore("mobile")]
-        public String Mobile { get; set; }
+        public string Mobile { get; set; }
 
         [JsonPropertyName("pc")]
         [DataStore("postalcode")]
-        public String PostalCode { get; set; }
+        public string PostalCode { get; set; }
 
         [JsonPropertyName("ci")]
         [DataStore("city", true)]
-        public String City { get; set; }
+        public string City { get; set; }
 
         [JsonPropertyName("co")]
         [DataStore("country", true)]
-        public String Country { get; set; }
+        public string Country { get; set; }
 
         [JsonPropertyName("a1")]
         [DataStore("address1")]
-        public String Address1 { get; set; }
+        public string Address1 { get; set; }
 
         [JsonPropertyName("a2")]
         [DataStore("address2")]
-        public String Address2 { get; set; }
+        public string Address2 { get; set; }
 
         [JsonPropertyName("ws")]
         [DataStore("website")]
-        public String Website { get; set; }
+        public string Website { get; set; }
 
         [JsonPropertyName("em")]
         [DataStore("email", true)]
-        public String Email { get; set; }
+        public string Email { get; set; }
 
         [JsonPropertyName("lt")]
         [DataStore("latitude")]

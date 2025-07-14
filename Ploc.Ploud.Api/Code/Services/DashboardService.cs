@@ -8,10 +8,12 @@ namespace Ploc.Ploud.Api
         public async Task<Dashboard> GetDashboardAsync(RequestBase request, SyncSettings syncSettings)
         {
             ICellar cellar = new Cellar(syncSettings.PloudFilePath);
+            
             if (!cellar.IsValid())
             {
                 return null;
             }
+            
             return await cellar.GetDashboardAsync();
         }
     }

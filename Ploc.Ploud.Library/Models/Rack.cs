@@ -8,11 +8,11 @@ namespace Ploc.Ploud.Library
     {
         [DataStore("model")]
         [JsonPropertyName("mo")]
-        public String Model { get; set; }
+        public string Model { get; set; }
 
         [DataStore("comments", true)]
         [JsonPropertyName("cm")]
-        public String Comments { get; set; }
+        public string Comments { get; set; }
 
         [DataStore("rows")]
         [JsonPropertyName("ro")]
@@ -42,15 +42,15 @@ namespace Ploc.Ploud.Library
         [DataStore("legend")]
         public RackLegendType Legend { get; set; }
 
+        [JsonPropertyName("in")]
+        [DataStore("intervals")]
+        public string Intervals { get; set; }
+
         public RackItemCollection GetItems()
         {
             throw new NotImplementedException();
         }
 
-        [JsonPropertyName("in")]
-        [DataStore("intervals")]
-        public String Intervals { get; set; }
-        
         public RackIntervalCollection GetRackIntervals()
         {
             throw new NotImplementedException();

@@ -8,15 +8,15 @@ namespace Ploc.Ploud.Api
     {
         private DateTime requestTime = DateTime.MinValue;
 
-        public String Token { get; set; }
+        public string Token { get; set; }
 
-        public String Signature { get; set; }
+        public string Signature { get; set; }
 
         public long Timestamp { get; set; }
 
         public long LastSyncTime { get; set; }
 
-        public String Device { get; set; }
+        public string Device { get; set; }
 
         public Guid PublicKey { get; set; } // Taken from Appsettings.json
 
@@ -26,6 +26,7 @@ namespace Ploc.Ploud.Api
             get
             {
                 this.DetermineRequestTime();
+
                 return this.requestTime;
             }
         }
@@ -41,26 +42,32 @@ namespace Ploc.Ploud.Api
         public virtual ValidationStatus Validate()
         {
             DateTime utcNow = DateTime.UtcNow;
+            
             this.DetermineRequestTime();
+            
             if (this.RequestTime == DateTime.MinValue)
             {
                 return ValidationStatus.InvalidTimestamp;
             }
+            
             DateTime minTime = this.RequestTime.AddMinutes(-20);
             DateTime maxTime = this.RequestTime.AddMinutes(20);
+            
             if (minTime > utcNow)
             {
                 return ValidationStatus.InvalidTimestamp;
             }
+            
             if (maxTime < utcNow)
             {
                 return ValidationStatus.InvalidTimestamp;
             }
-            if ((String.IsNullOrEmpty(this.Token))
-                | (String.IsNullOrEmpty(this.Signature)))
+            
+            if (string.IsNullOrEmpty(this.Token) | string.IsNullOrEmpty(this.Signature))
             {
                 return ValidationStatus.InvalidParams;
             }
+
             return ValidationStatus.Ok;
         }
     }

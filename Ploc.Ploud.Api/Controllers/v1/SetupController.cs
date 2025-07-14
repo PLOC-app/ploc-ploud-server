@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Ploc.Ploud.Library;
-using System;
 using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api.Controllers
@@ -26,34 +25,44 @@ namespace Ploc.Ploud.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportRsaKey([FromQuery] RsaKeyRequest request)
         {
-            if ((request == null)
-                || (String.IsNullOrEmpty(request.PrivateKey)))
+            if (request == null || string.IsNullOrEmpty(request.PrivateKey))
             {
                 this.logger.LogWarning("ExportRsaKey(), Request = NULL");
-                return BadRequest();
+
+                return this.BadRequest();
             }
+            
             this.logger.LogInformation("ExportRsaKey.Start()");
-            if (String.IsNullOrEmpty(this.ploudSettings.PrivateKey))
+            
+            if (string.IsNullOrEmpty(this.ploudSettings.PrivateKey))
             {
                 this.logger.LogError("ExportRsaKey(), Private key is not defined.");
-                return BadRequest();
+
+                return this.BadRequest();
             }
+
             if (this.ploudSettings.PrivateKey != request.PrivateKey)
             {
                 this.logger.LogError("ExportRsaKey(), Private key is incorrect.");
+                
                 await Task.Delay(2000); // To avoid brute force attacks
-                return Forbid();
+
+                return this.Forbid();
             }
+
             this.logger.LogInformation("ExportRsaKey.Start()");
+            
             using (ICryptoProvider cryptoProvider = ICryptoProviderFactory.CreateProvider())
             {
-                String data = cryptoProvider.ExportRsaKey();
+                string data = cryptoProvider.ExportRsaKey();
+                
                 var success = new
                 {
                     Status = Config.Success,
                     Data = data
                 };
-                return Ok(success);
+
+                return this.Ok(success);
             }
         }
 
@@ -61,33 +70,43 @@ namespace Ploc.Ploud.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> ImportRsaKey([FromBody] RsaKeyRequest request)
         {
-            if ((request == null)
-                || (String.IsNullOrEmpty(request.PrivateKey))
-                || (String.IsNullOrEmpty(request.Data)))
+            if (request == null
+                || string.IsNullOrEmpty(request.PrivateKey)
+                || string.IsNullOrEmpty(request.Data))
             {
                 this.logger.LogWarning("ImportRsaKey(), Request = NULL");
-                return BadRequest();
+
+                return this.BadRequest();
             }
+            
             this.logger.LogInformation("ImportRsaKey.Start()");
-            if (String.IsNullOrEmpty(this.ploudSettings.PrivateKey))
+            
+            if (string.IsNullOrEmpty(this.ploudSettings.PrivateKey))
             {
                 this.logger.LogError("ExportRsaKey(), Private key is not defined.");
-                return BadRequest();
+                
+                return this.BadRequest();
             }
+
             if (this.ploudSettings.PrivateKey != request.PrivateKey)
             {
                 this.logger.LogError("ExportRsaKey(), Private key is incorrect.");
+
                 await Task.Delay(2000); // To avoid brute force attacks
-                return Forbid();
+
+                return this.Forbid();
             }
+
             using (ICryptoProvider cryptoProvider = ICryptoProviderFactory.CreateProvider())
             {
                 bool status = cryptoProvider.ImportRsaKey(request.Data);
+                
                 var success = new
                 {
                     Status = status ? Config.Success : Config.Error
                 };
-                return Ok(success);
+
+                return this.Ok(success);
             }
         }
     }

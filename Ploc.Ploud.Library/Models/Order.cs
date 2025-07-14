@@ -8,16 +8,11 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("ve")]
         [DataStore("vendor")]
-        public String Vendor { get; set; }
-
-        public Vendor GetVendor()
-        {
-            throw new NotImplementedException();
-        }
+        public string Vendor { get; set; }
 
         [JsonPropertyName("cm")]
         [DataStore("comments", true)]
-        public String Comments { get; set; }
+        public string Comments { get; set; }
 
         [JsonPropertyName("in")]
         [DataStore("in")]
@@ -33,12 +28,7 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("wi")]
         [DataStore("wine")]
-        public String Wine { get; set; }
-
-        public Wine GetWine()
-        {
-            throw new NotImplementedException();
-        }
+        public string Wine { get; set; }
 
         [JsonPropertyName("dt")]
         [DataStore("date")]
@@ -47,7 +37,7 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("cy")]
         [DataStore("currency")]
-        public String Currency { get; set; }
+        public string Currency { get; set; }
 
         [JsonPropertyName("oc")]
         [DataStore("occasion")]
@@ -59,14 +49,24 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("sk")]
         [DataStore("appsku")]
-        public String Sku { get; set; }
+        public string Sku { get; set; }
 
         [JsonPropertyName("wn")]
         [DataStore("apppid")]
-        public String WineNumber { get; set; }
+        public string WineNumber { get; set; }
 
         [JsonPropertyName("pu")]
         [DataStore("producturl", true)]
-        public String ProductUrl { get; set; }
+        public string ProductUrl { get; set; }
+
+        public Wine GetWine()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Vendor GetVendor()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
