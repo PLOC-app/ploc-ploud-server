@@ -215,8 +215,6 @@ namespace Ploc.Ploud.Library
 
             command.CommandText = queryBuilder.ToString();
 
-            Console.WriteLine(command.CommandText);
-
             command.ExecuteNonQueryWithRetry();
         }
 
@@ -347,8 +345,6 @@ namespace Ploc.Ploud.Library
             // Remove last ,
             valuesBuilder.Remove(valuesBuilder.Length - 1, 1);
             command.CommandText = string.Concat(valuesBuilder, whereBuilder);
-
-            Console.WriteLine(command.CommandText);
         }
 
         public static void AsCreate(this SQLiteCommand command, Type ploudObjectType)

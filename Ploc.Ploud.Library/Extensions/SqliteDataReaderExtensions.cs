@@ -21,12 +21,10 @@ namespace Ploc.Ploud.Library
             
             foreach (PropertyInfo propertyInfo in properties)
             {
-                Console.WriteLine("{0}", propertyInfo.Name);
                 DataStoreAttribute dataStoreAttribute = propertyInfo.GetAttribute<DataStoreAttribute>();
             
                 if (dataStoreAttribute == null)
                 {
-                    Console.WriteLine("\tDataStoreAttribute == NULL");
                     continue;
                 }
                 
@@ -34,7 +32,6 @@ namespace Ploc.Ploud.Library
                 
                 if (ordinal == -1)
                 {
-                    Console.WriteLine("\tOrdinal == -1");
                     continue;
                 }
                 
@@ -42,11 +39,8 @@ namespace Ploc.Ploud.Library
                 
                 if (rawValue == null | rawValue == DBNull.Value)
                 {
-                    Console.WriteLine("\tRawValue == NULL");
                     continue;
                 }
-
-                Console.WriteLine("\t{0}", dataStoreAttribute.Name);
                 
                 if (propertyInfo.PropertyType.IsEnum)
                 {
