@@ -8,21 +8,11 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("rk")]
         [DataStore("rack")]
-        public String Rack { get; set; }
-
-        public Rack GetRack()
-        {
-            throw new NotImplementedException();
-        }
+        public string Rack { get; set; }
 
         [JsonPropertyName("wi")]
         [DataStore("wine")]
-        public String Wine { get; set; }
-
-        public Wine GetWine()
-        {
-            throw new NotImplementedException();
-        }
+        public string Wine { get; set; }
 
         [JsonPropertyName("rw")]
         [DataStore("row")]
@@ -46,10 +36,20 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("tg")]
         [DataStore("tags")]
-        public String Tags { get; set; }
+        public string Tags { get; set; }
 
         [JsonPropertyName("qr")]
         [DataStore("qrcode")]
-        public String QrCode { get; set; }
+        public string QrCode { get; set; }
+
+        public Rack GetRack()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Wine GetWine()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

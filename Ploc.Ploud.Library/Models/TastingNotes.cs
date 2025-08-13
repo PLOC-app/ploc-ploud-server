@@ -8,12 +8,7 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("wi")]
         [DataStore("wine")]
-        public String Wine { get; set; }
-
-        public Wine GetWine()
-        {
-            throw new NotImplementedException();
-        }
+        public string Wine { get; set; }
 
         [JsonPropertyName("no")]
         [DataStore("note")]
@@ -33,7 +28,7 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("lid")]
         [DataStore("lid")]
-        public String LocalTemplateIdentifier { get; set; }
+        public string LocalTemplateIdentifier { get; set; }
 
         [JsonPropertyName("dt")]
         [JsonConverter(typeof(DateTimeConverter))]
@@ -42,11 +37,11 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("pid")]
         [DataStore("pid")]
-        public String PlocIdentifier { get; set; }
+        public string PlocIdentifier { get; set; }
 
         [JsonPropertyName("wpid")]
         [DataStore("wpid")]
-        public String WinePlocIdentifier { get; set; }
+        public string WinePlocIdentifier { get; set; }
 
         [JsonPropertyName("so")]
         [DataStore("source")]
@@ -54,19 +49,19 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("sn")]
         [DataStore("sourcename")]
-        public String SourceName { get; set; }
+        public string SourceName { get; set; }
 
         [JsonPropertyName("spid")]
         [DataStore("spid")]
-        public String SourcePlocIdentifier { get; set; }
+        public string SourcePlocIdentifier { get; set; }
 
         [JsonPropertyName("ln")]
         [DataStore("ln")]
-        public String Language { get; set; }
+        public string Language { get; set; }
 
         [JsonPropertyName("im")]
         [DataStore("image")]
-        public String Image { get; set; }
+        public string Image { get; set; }
 
         [JsonPropertyName("iw")]
         [DataStore("imagewidth")]
@@ -98,6 +93,11 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("fl")]
         [DataStore("fields", true)]
-        public String Fields { get; set; }
+        public string Fields { get; set; }
+
+        public Wine GetWine()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

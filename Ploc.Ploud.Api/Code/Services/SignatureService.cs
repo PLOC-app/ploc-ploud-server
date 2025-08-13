@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -9,17 +8,19 @@ namespace Ploc.Ploud.Api
 {
     public class SignatureService : ISignatureService
     {
-        private static readonly String ServiceUrl = String.Concat(Config.ApiUrl, "Signature/Ploud/Verify");
+        private static readonly string ServiceUrl = string.Concat(Config.ApiUrl, "Signature/Ploud/Verify");
 
         public async Task<SignatureResponse> VerifySignatureAsync(SignatureRequest signatureRequest)
         {
             SignatureResponse signatureResponse = new SignatureResponse();
             signatureResponse.IsValid = false;
+
             using (HttpClient client = new HttpClient())
             {
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, ServiceUrl))
                 {
-                    String json = JsonSerializer.Serialize(signatureRequest);
+                    string json = JsonSerializer.Serialize(signatureRequest);
+                    
                     using (StringContent stringContent = new StringContent(json, Encoding.UTF8, "application/json"))
                     {
                         request.Content = stringContent;
@@ -30,11 +31,13 @@ namespace Ploc.Ploud.Api
                                 Trace.TraceError(json);
                                 return signatureResponse;
                             }
+
                             signatureResponse.IsValid = true; // TODO
                         }
                     }
                 }
             }
+
             return signatureResponse;
         }
     }

@@ -10,15 +10,18 @@ namespace Ploc.Ploud.Api
         public async static Task<AuthenticationResponse> AuthenticateAsync(this AuthenticationRequest request, IAuthenticationService authenticationService, IMemoryCache memoryCache)
         {
             AuthenticationResponse authenticationResponse = memoryCache.Get<AuthenticationResponse>(request.Token);
+
             if (authenticationResponse == null)
             {
                 authenticationResponse = await authenticationService.AuthenticateAsync(request);
+
                 if (authenticationResponse.IsAuthenticated)
                 {
                     MemoryCacheEntryOptions cacheExpiryOptions = CreateMemoryCacheEntryOptions();
                     memoryCache.Set<AuthenticationResponse>(request.Token, authenticationResponse, cacheExpiryOptions);
                 }
             }
+
             return authenticationResponse;
         }
 
@@ -57,7 +60,7 @@ namespace Ploc.Ploud.Api
             return await syncService.EraseDataAsync(request, syncSettings);
         }
 
-        public static async Task<String> PrepareForDownloadAsync(this DownloadRequest request, ISyncService syncService, SyncSettings syncSettings)
+        public static async Task<string> PrepareForDownloadAsync(this DownloadRequest request, ISyncService syncService, SyncSettings syncSettings)
         {
             return await syncService.PrepareForDownloadAsync(request, syncSettings);
         }
@@ -85,7 +88,7 @@ namespace Ploc.Ploud.Api
             };
         }
 
-        public static SignatureRequest ToSignatureRequest(this RequestBase request, Guid publicKey, String method)
+        public static SignatureRequest ToSignatureRequest(this RequestBase request, Guid publicKey, string method)
         {
             return new SignatureRequest()
             {
@@ -99,7 +102,7 @@ namespace Ploc.Ploud.Api
             };
         }
 
-        public static SignatureRequest ToSignatureRequest(this RequestBase request, Guid publicKey, String method, String objectId)
+        public static SignatureRequest ToSignatureRequest(this RequestBase request, Guid publicKey, string method, string objectId)
         {
             return new SignatureRequest()
             {

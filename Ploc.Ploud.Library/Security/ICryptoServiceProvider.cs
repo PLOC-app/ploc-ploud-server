@@ -4,12 +4,12 @@ namespace Ploc.Ploud.Library
 {
     interface ICryptoServiceProvider : IDisposable
     {
-        String Encrypt(byte[] data);
+        string Encrypt(byte[] data);
 
-        byte[] Decrypt(String value);
+        byte[] Decrypt(string value);
 
-        String Export();
+        string Export();
 
-        void Import(String data);
+        void Import(string data);
     }
 }

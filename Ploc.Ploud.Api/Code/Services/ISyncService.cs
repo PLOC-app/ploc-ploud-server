@@ -1,5 +1,4 @@
 ﻿using Ploc.Ploud.Library;
-using System;
 using System.Threading.Tasks;
 
 namespace Ploc.Ploud.Api
@@ -10,7 +9,7 @@ namespace Ploc.Ploud.Api
 
         Task<Document> GetDocumentAsync(DocumentRequest documentRequest, SyncSettings syncSettings);
 
-        Task<String> PrepareForDownloadAsync(DownloadRequest request, SyncSettings syncSettings);
+        Task<string> PrepareForDownloadAsync(DownloadRequest request, SyncSettings syncSettings);
 
         Task<bool> InitializeAsync(InitializeRequest request, SyncSettings syncSettings);
 

@@ -11,12 +11,12 @@ namespace Ploc.Ploud.Api
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -26,7 +26,7 @@ namespace Ploc.Ploud.Api
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<IDashboardService, DashboardService>();
             services.AddSingleton<ISyncService, SyncService>();
-            services.Configure<PloudSettings>(Configuration.GetSection("Ploud"));
+            services.Configure<PloudSettings>(this.Configuration.GetSection("Ploud"));
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
@@ -40,6 +40,7 @@ namespace Ploc.Ploud.Api
             {
                 options.JsonSerializerOptions.IgnoreNullValues = true;
             });
+
             services.AddMemoryCache();
             services.AddApplicationInsightsTelemetry();
         }
@@ -51,6 +52,7 @@ namespace Ploc.Ploud.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();

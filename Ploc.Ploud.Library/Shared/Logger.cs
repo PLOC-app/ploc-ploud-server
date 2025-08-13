@@ -7,8 +7,11 @@ namespace Ploc.Ploud.Library
     {
         public static void Error(Exception ex)
         {
-            Trace.TraceError(ex.ToString());
-            Console.WriteLine(ex);
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string errorMessage = $"[{timestamp}] {ex}";
+
+            Trace.TraceError(errorMessage);
+            Console.WriteLine(errorMessage);
         }
     }
 }

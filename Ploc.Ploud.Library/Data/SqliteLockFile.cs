@@ -6,17 +6,17 @@ namespace Ploc.Ploud.Library
 {
     public class SqliteLockFile
     {
-
-        public SqliteLockFile(String lockFilePath)
+        public SqliteLockFile(string lockFilePath)
         {
             this.LockFilePath = lockFilePath;
         }
 
-        public String LockFilePath { get; private set; }
+        public string LockFilePath { get; private set; }
 
         public bool Lock()
         {
             int retryCount = 0;
+
             while (true)
             {
                 try
@@ -26,11 +26,13 @@ namespace Ploc.Ploud.Library
                 catch
                 {
                     Thread.Sleep(Config.Data.RetryDelay);
+
                     if (++retryCount > Config.Data.MaxRetries)
                     {
                         return false;
                     }
                 }
+
                 if (File.Exists(this.LockFilePath))
                 {
                     break;
@@ -42,20 +44,24 @@ namespace Ploc.Ploud.Library
         public void Unlock()
         {
             int retryCount = 0;
+
             while (true)
             {
                 if (!File.Exists(this.LockFilePath))
                 {
                     break;
                 }
+
                 try
                 {
                     File.Delete(this.LockFilePath);
+
                     break;
                 }
                 catch
                 {
                     Thread.Sleep(Config.Data.RetryDelay);
+
                     if (++retryCount > Config.Data.MaxRetries)
                     {
                         return;

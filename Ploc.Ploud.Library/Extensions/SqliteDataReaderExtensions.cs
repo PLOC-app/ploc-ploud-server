@@ -18,29 +18,30 @@ namespace Ploc.Ploud.Library
         {
             Type typeOfT = obj.GetType();
             PropertyInfo[] properties = typeOfT.GetProperties(); // TODO à mettre en cache
+            
             foreach (PropertyInfo propertyInfo in properties)
             {
-                Console.WriteLine("{0}", propertyInfo.Name);
                 DataStoreAttribute dataStoreAttribute = propertyInfo.GetAttribute<DataStoreAttribute>();
+            
                 if (dataStoreAttribute == null)
                 {
-                    Console.WriteLine("\tDataStoreAttribute == NULL");
                     continue;
                 }
+                
                 int ordinal = dataReader.GetOrdinal(dataStoreAttribute.Name);
+                
                 if (ordinal == -1)
                 {
-                    Console.WriteLine("\tOrdinal == -1");
                     continue;
                 }
-                Object rawValue = dataReader[ordinal];
-                if ((rawValue == null)
-                    | (rawValue == DBNull.Value))
+                
+                object rawValue = dataReader[ordinal];
+                
+                if (rawValue == null | rawValue == DBNull.Value)
                 {
-                    Console.WriteLine("\tRawValue == NULL");
                     continue;
                 }
-                Console.WriteLine("\t{0}", dataStoreAttribute.Name);
+                
                 if (propertyInfo.PropertyType.IsEnum)
                 {
                     propertyInfo.SetValue(obj, Convert.ToInt32(rawValue));
@@ -143,12 +144,14 @@ namespace Ploc.Ploud.Library
                 {
                     Logger.Error(new Exception(command.CommandText, ex));
                     Thread.Sleep(Config.Data.RetryDelay);
+
                     if (++retryCount > Config.Data.MaxRetries)
                     {
                         break;
                     }
                 }
             }
+
             return dbDataReader;
         }
 
@@ -175,6 +178,7 @@ namespace Ploc.Ploud.Library
                     }
                 }
             }
+
             return dbDataReader;
         }
 

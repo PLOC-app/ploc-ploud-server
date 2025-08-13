@@ -13,19 +13,22 @@ namespace Ploc.Ploud.Library
             {
                 throw new PlatformNotSupportedException();
             }
+
             this.rsaCryptoServiceProvider = new RSACryptoServiceProvider(keySize, cspParameters);
         }
 
         public string Encrypt(byte[] data)
         {
             byte[] cypherText = rsaCryptoServiceProvider.Encrypt(data, false);
-            String encryptedValue = Convert.ToBase64String(cypherText);
+            string encryptedValue = Convert.ToBase64String(cypherText);
+
             return encryptedValue;
         }
 
         public byte[] Decrypt(string value)
         {
             byte[] data = Convert.FromBase64String(value);
+
             return this.rsaCryptoServiceProvider.Decrypt(data, false);
         }
 

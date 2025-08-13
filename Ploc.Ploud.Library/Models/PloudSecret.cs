@@ -7,50 +7,25 @@ namespace Ploc.Ploud.Library
     [DataStore("mbw")]
     public sealed class PloudSecret : IPloudObject
     {
-        public const String GlobalIdentifier = "__global__";
-
-        public PloudSecret()
-        {
-            this.Identifier = GlobalIdentifier;
-        }
+        public const string GlobalIdentifier = "__global__";
 
         [DataStore("id", false, true)]
-        public String Identifier { get; set; }
+        public string Identifier { get; set; }
 
         [DataStore("cwc", false)]
-        public String Key { get; set; }
+        public string Key { get; set; }
 
         [DataStore("kzf", false)]
-        public String Iv { get; set; }
+        public string Iv { get; set; }
 
         [DataStore("version", false)]
-        public String Version { get; set; }
+        public string Version { get; set; }
 
         [JsonIgnore]
         public ICellar Cellar { get; set; }
 
-        public bool Save()
-        {
-            return this.Cellar.Save(this);
-        }
-
-        public Task<bool> SaveAsync()
-        {
-            return this.Cellar.SaveAsync(this);
-        }
-
-        public bool Delete()
-        {
-            throw new InvalidOperationException();
-        }
-
-        public Task<bool> DeleteAsync()
-        {
-            throw new InvalidOperationException();
-        }
-
         [JsonIgnore]
-        public String Name
+        public string Name
         {
             get
             {
@@ -112,6 +87,31 @@ namespace Ploc.Ploud.Library
             {
                 throw new NotSupportedException();
             }
+        }
+
+        public PloudSecret()
+        {
+            this.Identifier = GlobalIdentifier;
+        }
+
+        public bool Save()
+        {
+            return this.Cellar.Save(this);
+        }
+
+        public Task<bool> SaveAsync()
+        {
+            return this.Cellar.SaveAsync(this);
+        }
+
+        public bool Delete()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public Task<bool> DeleteAsync()
+        {
+            throw new InvalidOperationException();
         }
     }
 }
