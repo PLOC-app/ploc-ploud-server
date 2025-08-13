@@ -6,14 +6,14 @@ namespace Ploc.Ploud.Library
 {
     public class AesCryptoProvider : ICryptoProvider, IDisposable
     {
-        private const String KeyContainerName = "PLOUD";
+        private const string KeyContainerName = "PLOUD";
         private const int KeySize = 2048;
         private byte[] aesKey;
         private byte[] aesIv;
 
         private ICryptoServiceProvider cryptoServiceProvider;
 
-        public AesCryptoProvider(String encryptedKey, String encryptedIv)
+        public AesCryptoProvider(string encryptedKey, string encryptedIv)
         {
             this.cryptoServiceProvider = CreateProvider();
             this.aesKey = this.DecryptRsa(encryptedKey);
@@ -40,32 +40,35 @@ namespace Ploc.Ploud.Library
             }
         }
 
-        public String EncryptedKey { get; private set; }
+        public string EncryptedKey { get; private set; }
 
-        public String EncryptedIv { get; private set; }
+        public string EncryptedIv { get; private set; }
 
-        private byte[] DecryptRsa(String value)
+        private byte[] DecryptRsa(string value)
         {
             return this.cryptoServiceProvider.Decrypt(value);
         }
 
-        private String EncryptRsa(byte[] data)
+        private string EncryptRsa(byte[] data)
         {
             return this.cryptoServiceProvider.Encrypt(data);
         }
 
-        public String Decrypt(String value)
+        public string Decrypt(string value)
         {
             if (String.IsNullOrEmpty(value))
             {
                 return String.Empty;
             }
+
             byte[] data = Convert.FromBase64String(value);
-            String plainText = null;
+            string plainText = null;
+            
             using (Aes aes = Aes.Create())
             {
                 aes.Key = this.aesKey;
                 aes.IV = this.aesIv;
+
                 using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
                 {
                     using (MemoryStream memoryStream = new MemoryStream(data))
@@ -80,20 +83,24 @@ namespace Ploc.Ploud.Library
                     }
                 }
             }
+
             return plainText;
         }
 
-        public String Encrypt(String value)
+        public string Encrypt(string value)
         {
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
-                return String.Empty;
+                return string.Empty;
             }
+
             byte[] cypherText;
+            
             using (Aes aes = Aes.Create())
             {
                 aes.Key = this.aesKey;
                 aes.IV = this.aesIv;
+
                 using (ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
@@ -104,37 +111,42 @@ namespace Ploc.Ploud.Library
                             {
                                 streamWriter.Write(value);
                             }
+
                             cypherText = memoryStream.ToArray();
                         }
                     }
                 }
             }
+
             return Convert.ToBase64String(cypherText);
         }
 
-        public String ExportRsaKey()
+        public string ExportRsaKey()
         {
             return this.cryptoServiceProvider.Export();
         }
 
-        public bool ImportRsaKey(String data)
+        public bool ImportRsaKey(string data)
         {
-            if (String.IsNullOrEmpty(data))
+            if (string.IsNullOrEmpty(data))
             {
                 return false;
             }
+
             bool success = false;
+            
             try
             {
                 this.Dispose();
                 this.cryptoServiceProvider = CreateProvider(true);
                 this.cryptoServiceProvider.Import(data);
+
                 success = true;
             }
             catch
             {
-
             }
+
             return success;
         }
 
@@ -146,19 +158,23 @@ namespace Ploc.Ploud.Library
                 {
                     KeyContainerName = KeyContainerName
                 };
+
                 cspParameters.Flags |= CspProviderFlags.UseMachineKeyStore;
+                
                 if (!excludeFlags)
                 {
                     cspParameters.Flags |= CspProviderFlags.UseArchivableKey | CspProviderFlags.NoPrompt;
                 }
+                
                 return new WindowsCryptoServiceProvider(KeySize, cspParameters);
             }
+
             return new LinuxCryptoServiceProvider(KeySize);
         }
 
         private ICryptoServiceProvider CreateProvider()
         {
-            return CreateProvider(false);
+            return this.CreateProvider(false);
         }
 
         public void Dispose()

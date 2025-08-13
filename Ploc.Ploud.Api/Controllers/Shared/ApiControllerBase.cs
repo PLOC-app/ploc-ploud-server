@@ -7,7 +7,7 @@ namespace Ploc.Ploud.Api.Controllers
     {
         protected new IActionResult Forbid()
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new
+            return this.StatusCode(StatusCodes.Status403Forbidden, new
             {
                 Status = Config.Error
             });
@@ -15,7 +15,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         protected IActionResult Forbid(ValidationStatus validationError)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new
+            return this.StatusCode(StatusCodes.Status403Forbidden, new
             {
                 Status = Config.Error,
                 Error = validationError
@@ -24,7 +24,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         protected new IActionResult BadRequest()
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new
+            return this.StatusCode(StatusCodes.Status400BadRequest, new
             {
                 Status = Config.Error
             });
@@ -32,7 +32,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         protected IActionResult BadRequest(ValidationStatus validationError)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new
+            return this.StatusCode(StatusCodes.Status400BadRequest, new
             {
                 Status = Config.Error,
                 Error = validationError
@@ -41,7 +41,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         protected new IActionResult NotFound()
         {
-            return StatusCode(StatusCodes.Status404NotFound, new
+            return this.StatusCode(StatusCodes.Status404NotFound, new
             {
                 Status = Config.Error
             });
@@ -49,7 +49,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         protected IActionResult NotFound(ValidationStatus validationError)
         {
-            return StatusCode(StatusCodes.Status404NotFound, new
+            return this.StatusCode(StatusCodes.Status404NotFound, new
             {
                 Status = Config.Error,
                 Error = validationError
@@ -58,7 +58,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         protected IActionResult InternalServerError()
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return this.StatusCode(StatusCodes.Status500InternalServerError, new
             {
                 Status = Config.Error
             });
@@ -66,7 +66,7 @@ namespace Ploc.Ploud.Api.Controllers
 
         protected IActionResult InternalServerError(ValidationStatus validationError)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new
+            return this.StatusCode(StatusCodes.Status500InternalServerError, new
             {
                 Status = Config.Error,
                 Error = validationError

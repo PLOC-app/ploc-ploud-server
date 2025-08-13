@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace Ploc.Ploud.Library
+﻿namespace Ploc.Ploud.Library
 {
     public static class Config
     {
-        public const String Version = "0.1";
+        public const string Version = "0.1";
 
-        public const String SqliteLockFileExtension = ".plock";
+        public const string SqliteLockFileExtension = ".plock";
 
         public static class Data
         {
@@ -14,7 +12,7 @@ namespace Ploc.Ploud.Library
 
             public const int RetryDelay = 200;
 
-            internal static readonly String[] TableNames = new String[] { "appellation", "bottleformat", "classification", "color", "country", "document", "globalparameter", "grape", "io", "owner", "rack", "rackitem", "region", "tastingnotes", "vendor", "wine" };
+            internal static readonly string[] TableNames = new string[] { "appellation", "bottleformat", "classification", "color", "country", "document", "globalparameter", "grape", "io", "owner", "rack", "rackitem", "region", "tastingnotes", "vendor", "wine" };
         }
     }
 }

@@ -17,10 +17,11 @@ namespace Ploc.Ploud.Library
 
         private void Initialize(int keySize)
         {
-            String rsaFilePath = GetRsaFilePath();
+            string rsaFilePath = GetRsaFilePath();
+            
             if (File.Exists(rsaFilePath))
             {
-                String xmlData = File.ReadAllText(rsaFilePath, Encoding.UTF8);
+                string xmlData = File.ReadAllText(rsaFilePath, Encoding.UTF8);
                 this.rsa = RSA.Create(keySize);
                 this.Import(xmlData);
             }
@@ -33,21 +34,24 @@ namespace Ploc.Ploud.Library
 
         private void SaveToFile()
         {
-            String rsaFilePath = GetRsaFilePath();
-            String xmlData = this.Export();
+            string rsaFilePath = GetRsaFilePath();
+            string xmlData = this.Export();
+            
             File.WriteAllText(rsaFilePath, xmlData);
         }
 
-        public String Encrypt(byte[] data)
+        public string Encrypt(byte[] data)
         {
             byte[] cypherText = this.rsa.Encrypt(data, RSAEncryptionPadding);
-            String encryptedValue = Convert.ToBase64String(cypherText);
+            string encryptedValue = Convert.ToBase64String(cypherText);
+            
             return encryptedValue;
         }
 
         public byte[] Decrypt(string value)
         {
             byte[] data = Convert.FromBase64String(value);
+            
             return this.rsa.Decrypt(data, RSAEncryptionPadding);
         }
 
@@ -59,18 +63,21 @@ namespace Ploc.Ploud.Library
         public void Import(string data)
         {
             this.rsa.FromXmlString(data);
+
             this.SaveToFile();
         }
 
-        private String GetRsaFilePath()
+        private string GetRsaFilePath()
         {
-            String assemblyLocation = typeof(ICryptoProvider).Assembly.Location;
-            String appDirectory = Path.GetDirectoryName(assemblyLocation);
-            String configDirectory = Path.Combine(appDirectory, "config");
+            string assemblyLocation = typeof(ICryptoProvider).Assembly.Location;
+            string appDirectory = Path.GetDirectoryName(assemblyLocation);
+            string configDirectory = Path.Combine(appDirectory, "config");
+            
             if (!Directory.Exists(configDirectory))
             {
                 Directory.CreateDirectory(configDirectory);
             }
+            
             return Path.Combine(configDirectory, "ploud.bin");
         }
 

@@ -8,90 +8,55 @@ namespace Ploc.Ploud.Library
     {
         [JsonPropertyName("cn")]
         [DataStore("country")]
-        public String Country { get; set; }
-
-        public Country GetCountry()
-        {
-            throw new NotImplementedException();
-        }
+        public string Country { get; set; }
 
         [JsonPropertyName("rn")]
         [DataStore("region")]
-        public String Region { get; set; }
-
-        public Region GetRegion()
-        {
-            throw new NotImplementedException();
-        }
+        public string Region { get; set; }
 
         [JsonPropertyName("ap")]
         [DataStore("appellation")]
-        public String Appellation { get; set; }
-
-        public Appellation GetAppellation()
-        {
-            throw new NotImplementedException();
-        }
+        public string Appellation { get; set; }
 
         [JsonPropertyName("vf")]
         [DataStore("bottleformat")]
-        public String BottleFormat { get; set; }
-
-        public BottleFormat GetBottleFormat()
-        {
-            throw new NotImplementedException();
-        }
+        public string BottleFormat { get; set; }
 
         [JsonPropertyName("cl")]
         [DataStore("classification")]
-        public String Classification { get; set; }
-
-        public Classification GetClassification()
-        {
-            throw new NotImplementedException();
-        }
+        public string Classification { get; set; }
 
         [JsonPropertyName("co")]
         [DataStore("color")]
-        public String Color { get; set; }
-
-        public Color GetColor()
-        {
-            throw new NotImplementedException();
-        }
+        public string Color { get; set; }
 
         [JsonPropertyName("ow")]
         [DataStore("owner")]
-        public String Owner { get; set; }
-
-        public Owner GetOwner()
-        {
-            throw new NotImplementedException();
-        }
+        public string Owner { get; set; }
 
         [JsonPropertyName("pid")]
         [DataStore("pid", true)]
-        public String PlocIdentifier { get; set; }
+        public string PlocIdentifier { get; set; }
 
         [JsonPropertyName("cs")]
         [DataStore("comments", true)]
-        public String Comments { get; set; }
+        public string Comments { get; set; }
 
         [JsonPropertyName("cu")]
         [DataStore("cuvee")]
-        public String Cuvee { get; set; }
+        public string Cuvee { get; set; }
 
         [JsonPropertyName("tg")]
         [DataStore("tags", true)]
-        public String Tags { get; set; }
+        public string Tags { get; set; }
 
         [JsonPropertyName("re")]
         [DataStore("reference", true)]
-        public String Reference { get; set; }
+        public string Reference { get; set; }
 
         [JsonPropertyName("gr")]
         [DataStore("composition")]
-        public String Grapes { get; set; }
+        public string Grapes { get; set; }
 
         [JsonPropertyName("vi")]
         [DataStore("vintage")]
@@ -159,11 +124,11 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("ln")]
         [DataStore("ln")]
-        public String Language { get; set; }
+        public string Language { get; set; }
 
         [JsonPropertyName("im")]
         [DataStore("image")]
-        public String Image { get; set; }
+        public string Image { get; set; }
 
         [JsonPropertyName("iw")]
         [DataStore("imagewidth")]
@@ -175,7 +140,7 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("ci")]
         [DataStore("coverimage")]
-        public String CoverImage { get; set; }
+        public string CoverImage { get; set; }
 
         [JsonPropertyName("cw")]
         [DataStore("coverimagewidth")]
@@ -191,11 +156,11 @@ namespace Ploc.Ploud.Library
 
         [JsonPropertyName("sk")]
         [DataStore("appsku")]
-        public String Sku { get; set; }
+        public string Sku { get; set; }
 
         [JsonPropertyName("pu")]
         [DataStore("producturl", true)]
-        public String ProductUrl { get; set; }
+        public string ProductUrl { get; set; }
 
         [JsonPropertyName("no")]
         [DataStore("notification")]
@@ -204,5 +169,40 @@ namespace Ploc.Ploud.Library
         [JsonPropertyName("ps")]
         [DataStore("presheet")]
         public WineSheetState SheetState { get; set; }
+
+        public Country GetCountry()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Region GetRegion()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Appellation GetAppellation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public BottleFormat GetBottleFormat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Classification GetClassification()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Color GetColor()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Owner GetOwner()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -4,12 +4,12 @@ namespace Ploc.Ploud.Library
 {
     public interface ICryptoProvider : IDisposable
     {
-        String Encrypt(String value);
+        string Encrypt(string value);
 
-        String Decrypt(String value);
+        string Decrypt(string value);
 
-        String ExportRsaKey();
+        string ExportRsaKey();
 
-        bool ImportRsaKey(String data);
+        bool ImportRsaKey(string data);
     }
 }

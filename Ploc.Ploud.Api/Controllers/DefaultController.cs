@@ -17,7 +17,8 @@ namespace Ploc.Ploud.Api.Controllers
                 Github = "https://github.com/PLOC-app/ploc-ploud-server/",
                 Website = "https://www.PLOC.co/"
             };
-            return Ok(status);
+
+            return this.Ok(status);
         }
     }
 }

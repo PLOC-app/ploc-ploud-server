@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Ploc.Ploud.Api
+﻿namespace Ploc.Ploud.Api
 {
     public class DocumentRequest : RequestBase
     {
