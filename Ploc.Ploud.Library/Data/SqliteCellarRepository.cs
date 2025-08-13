@@ -17,7 +17,7 @@ namespace Ploc.Ploud.Library
 
         public string SqlitePath { get; private set; }
 
-        private const int CommandTimeout = 120;
+        private const int CommandTimeout = 160;
 
         public SqliteCellarRepository(ICellar cellar, string sqlitePath)
         {
@@ -1141,7 +1141,7 @@ namespace Ploc.Ploud.Library
                 await command.ExecuteNonQueryWithRetryAsync();
 
                 command.Parameters.Clear();
-                command.CommandText = "DELETE FROM globalparameter where title = 'deviceIdentifier';";
+                command.CommandText = "DELETE FROM globalparameter where name = 'deviceIdentifier';";
                 await command.ExecuteNonQueryWithRetryAsync();
 
                 command.CommandText = "VACUUM;";
